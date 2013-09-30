@@ -27,9 +27,10 @@
  File Description:
 
  Change History:
-  Rev   Description
-  ----  -----------------------------------------
-  1.0   Initial release
+             Rev   Description
+            ----  -----------------------------------------
+2013/09/18  1.0   Initial release
+2013/09/30  1.1   corrent typo
 ********************************************************************/
 #ifndef BI_COMMON_H
 #define	BI_COMMON_H
@@ -53,7 +54,7 @@ extern volatile int *reply_code;
 #define FLAG_ON 1
 #define FLAG_OFF 0
 
-/// conbert between nt to chart[]
+/// convert between int to char[]
 union int_char
 {    
     int i;             ///< i=0x12345678
@@ -62,7 +63,7 @@ union int_char
     int *p;            ///< p=0x12345678
 };
 
-/// conbert between long int to cjart[]
+/// convert between long int to char[]
 union long_char
 {
     long l;             ///< 0x12345678 22334455

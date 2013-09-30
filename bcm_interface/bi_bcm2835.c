@@ -16,9 +16,8 @@
     @par        History
     - 2013/09/18 Akira Hiramine
       -# Initial Version
-    - 20XX/XX/XX anyone
-      -# Add xxx 
-      -# Delete yyy 
+    - 2013/09/30 Akira Hiramine
+      -# Delete the useless codes
 ******************************************************************************/
 
 #include <stdlib.h>
@@ -31,14 +30,13 @@
 #include <unistd.h>
 #include "bcm_interface.h"
 
-//
-// Low level register access functions
-//
-
 /// \defgroup bi_bcm2835 bi_bcm2835
 /// \ingroup PARENT
 /// @{
 
+//
+// Low level register access functions
+//
 
 //uint8_t uint8_t_ret;
 //int int_ret;
@@ -91,208 +89,6 @@ int loop_count;
     return -1;
 }
 
-/// \cond 
-int send_command_old(struct ring_buff *rb, char *str, int len)
-{
-int ret;
-int int_ret;
-uint8_t uint8_t_ret;
-
-unsigned char ope_code;
-char *dest;
-uint32_t dlen;
-    ope_code = buff[0];
-//    printf("send ope_code=%02x \n", ope_code);
-    ret = 0;
-    switch( ope_code )
-    {
-/*
-    case OPE_SET_DEBUG:         //  void  bcm2835_set_debug(uint8_t debug);
-    case OPE_PERI_WRITE:        //  void bcm2835_peri_write(volatile uint32_t* paddr, uint32_t value);
-    case OPE_PERI_WRITE_NB:     //  void bcm2835_peri_write_nb(volatile uint32_t* paddr, uint32_t value);
-    case OPE_PERI_SET_BITS:     //  void bcm2835_peri_set_bits(volatile uint32_t* paddr, uint32_t value, uint32_t mask);
-    case OPE_GPIO_FSEL:         //  void bcm2835_gpio_fsel(uint8_t pin, uint8_t mode);
-    case OPE_GPIO_SET:          //  void bcm2835_gpio_set(uint8_t pin);
-    case OPE_GPIO_CLR:          //  void bcm2835_gpio_clr(uint8_t pin);
-    case OPE_GPIO_SET_MULTI:    //  void bcm2835_gpio_set_multi(uint32_t mask);
-    case OPE_GPIO_CLR_MULTI:    //  void bcm2835_gpio_clr_multi(uint32_t mask);
-    case OPE_GPIO_SET_EDS:      //  void bcm2835_gpio_set_eds(uint8_t pin);
-    case OPE_GPIO_REN:          //  void bcm2835_gpio_ren(uint8_t pin);
-    case OPE_GPIO_CLR_REN:      //  void bcm2835_gpio_clr_ren(uint8_t pin);
-    case OPE_GPIO_FEN:          //  void bcm2835_gpio_fen(uint8_t pin);
-    case OPE_GPIO_CLR_FEN:      //  void bcm2835_gpio_clr_fen(uint8_t pin);
-    case OPE_GPIO_HEN:          //  void bcm2835_gpio_hen(uint8_t pin);
-    case OPE_GPIO_CLR_HEN:      //  void bcm2835_gpio_clr_hen(uint8_t pin);
-    case OPE_GPIO_LEN:          //  void bcm2835_gpio_len(uint8_t pin);
-    case OPE_GPIO_CLR_LEN:      //  void bcm2835_gpio_clr_len(uint8_t pin);
-    case OPE_GPIO_AREN:         //  void bcm2835_gpio_aren(uint8_t pin);
-    case OPE_GPIO_CLR_AREN:     //  void bcm2835_gpio_clr_aren(uint8_t pin);
-    case OPE_GPIO_AFEN:         //  void bcm2835_gpio_afen(uint8_t pin);
-    case OPE_GPIO_CLR_AFEN:     //  void bcm2835_gpio_clr_afen(uint8_t pin);-
-    case OPE_GPIO_PUD:          //  void bcm2835_gpio_pud(uint8_t pud);
-    case OPE_GPIO_PUDCLK:       //  void bcm2835_gpio_pudclk(uint8_t pin, uint8_t on);
-    case OPE_GPIO_WRITE:        //  void bcm2835_gpio_write(uint8_t pin, uint8_t on);
-    case OPE_GPIO_SET_PAD:      //  void bcm2835_gpio_set_pad(uint8_t group, uint32_t control);
-    case OPE_DELAY:             //  void bcm2835_delay (unsigned int millis);
-    case OPE_DELAYMICROSECONDS: //  void bcm2835_delayMicroseconds (uint64_t micros);
-    case OPE_GPIO_WRITE_MULTI:  //  void bcm2835_gpio_write_multi(uint32_t mask, uint8_t on);
-    case OPE_GPIO_WRITE_MASK:   //  void bcm2835_gpio_write_mask(uint32_t value, uint32_t mask);
-    case OPE_GPIO_SET_PUD:      //  void bcm2835_gpio_set_pud(uint8_t pin, uint8_t pud);
-    case OPE_SPI_BEGIN:         //  void bcm2835_spi_begin(void);
-    case OPE_SPI_END:           //  void bcm2835_spi_end(void);
-    case OPE_SPI_SETBITORDER:   //  void bcm2835_spi_setBitOrder(uint8_t order);
-    case OPE_SPI_SETCLOCKDIVIDER:       //  void bcm2835_spi_setClockDivider(uint16_t divider);
-    case OPE_SPI_SETDATAMODE:   //  void bcm2835_spi_setDataMode(uint8_t mode);
-    case OPE_SPI_CHIPSELECT:    //  void bcm2835_spi_chipSelect(uint8_t cs);
-    case OPE_SPI_SETCHIPSELECTPOLARITY: //  void bcm2835_spi_setChipSelectPolarity(uint8_t cs, uint8_t active);
-    case OPE_SPI_WRITENB:       //  void bcm2835_spi_writenb(char* buf, uint32_t len);
-    case OPE_I2C_BEGIN:         //  void bcm2835_i2c_begin(void);
-    case OPE_I2C_END:           //  void bcm2835_i2c_end(void);
-    case OPE_I2C_SETSLAVEADDRESS:       //  void bcm2835_i2c_setSlaveAddress(uint8_t addr);
-    case OPE_I2C_SETCLOCKDIVIDER:       //  void bcm2835_i2c_setClockDivider(uint16_t divider);
-    case OPE_I2C_SET_BAUDRATE:          //  void bcm2835_i2c_set_baudrate(uint32_t baudrate);
-    case OPE_ST_DELAY:                  //  void bcm2835_st_delay(uint64_t offset_micros, uint64_t micros);
-        ret = put_command( rb, str, len );
-        break;
-    case OPE_HELLO:
-        ret = put_command( rb, str, len );
-        if ( ret != 0 )break;
-        ret = context_switch(100);
-        printf("sync_code=%d reply_code=%d \n ", *sync_code, *reply_code);
-        if( ret == 0 )
-        {
-          get_ope_code();
-          get_int_code();
-          len = *(int *)(buff+1);
-          *(bi_rec_buff+len) = '\0';
-          printf("Reply %s %d\n", bi_rec_buff, len);
-        }
-        break;
-    case OPE_EXIT:
-        ret = put_command( rb, str, len );
-        if ( ret != 0 )break;
-        ret = context_switch(10000);
-        break;
-*/
-    case OPE_GPIO_LEV:          //  uint8_t bcm2835_gpio_lev(uint8_t pin);
-//    set_ope_code( OPE_GPIO_LEV );
-//    set_byte_code( ret );
-    case OPE_GPIO_EDS:          //  uint8_t bcm2835_gpio_eds(uint8_t pin);
-//    set_ope_code( OPE_GPIO_EDS );
-//    set_byte_code( ret );
-    case OPE_SPI_TRANSFER:      //  uint8_t bcm2835_spi_transfer(uint8_t value);
-//    set_ope_code( OPE_SPI_TRANSFER );
-//    set_byte_code( ret );
-    case OPE_I2C_WRITE:                 //  uint8_t bcm2835_i2c_write(const char * buf, uint32_t len);
-//    set_ope_code( OPE_I2C_WRITE );
-//    set_byte_code( ret );
-      ret = put_command( rb, str, len );
-      if ( ret != 0 )break;
-      ret = context_switch(100);
-      if( ret == 0 )
-      {
-        printf("r_buff=%p rp=%d \n",r_buff, r_buff->rp);
-        get_ope_code();
-        get_byte_code();
-        printf("get_ope=%02x get_ret=%02x \n ",*buff, *(buff+1) );
-        uint8_t_ret = *(uint8_t *)(buff+1); 
-      }
-      break;
-      
-    case OPE_SPI_TRANSFERNB:    //  void bcm2835_spi_transfernb(char* tbuf, char* rbuf, uint32_t len);
-//    set_ope_code( OPE_SPI_TRANSFERNB );
-//    set_int_code( (int)rbuf );
-//    set_int_code( len );
-    case OPE_SPI_TRANSFERN:     //  void bcm2835_spi_transfern(char* buf, uint32_t len);
-//    set_ope_code( OPE_SPI_TRANSFERN );
-//    set_int_code( (int)buff );
-//    set_int_code( len );
-      ret = put_command( rb, str, len );
-      if ( ret != 0 )break;
-      ret = context_switch(100);
-      if( ret == 0 )
-      {
-        get_ope_code();
-        get_int_code();
-        get_int_code();
-        dest = *(char **)(buff+1);
-        dlen = *(uint32_t *)(buff+5);
-        copy_str( dest, bi_rec_buff, dlen);
-      }
-      break;
-  
-    case OPE_I2C_READ:                  //  uint8_t bcm2835_i2c_read(char* buf, uint32_t len);
-//    set_ope_code( OPE_I2C_READ );
-//    set_byte_code( ret );
-//    set_int_code( buf );
-//    set_int_code( len );
-    case OPE_I2C_READ_REGISTER_RS:      //  uint8_t bcm2835_i2c_read_register_rs(char* regaddr, char* buf, uint32_t len);
-//    set_ope_code( OPE_I2C_READ_REGISTER_RS );
-//    set_byte_code( ret );
-//    set_int_code( buf );
-//    set_int_code( len );
-      ret = put_command( rb, str, len );
-      if ( ret != 0 )break;
-      ret = context_switch(100);
-      if( ret == 0 )
-      {
-        get_ope_code();
-        get_byte_code();
-        get_int_code();
-        get_int_code();
-        dest = *(char **)(buff+2);
-        dlen = *(uint32_t *)(buff+6);
-        copy_str( dest, bi_rec_buff, dlen);
-        uint8_t_ret = *(uint8_t *)(buff+1); 
-      }
-      break;
-        
-    case OPE_INIT:              //  int bcm2835_init(void);
-//    set_ope_code( OPE_INIT );
-//    set_int_code( bcm2835_init() );
-    case OPE_CLOSE:             //  int bcm2835_close(void);
-//    set_ope_code( OPE_CLOSE );
-//    set_int_code( bcm2835_close() );
-    case OPE_PERI_READ:         //  uint32_t bcm2835_peri_read(volatile uint32_t* paddr);
-//    set_ope_code( OPE_PERI_READ );
-//    set_int_code( ret );
-    case OPE_PERI_READ_NB:      //  uint32_t bcm2835_peri_read_nb(volatile uint32_t* paddr);
-//    set_ope_code( OPE_PERI_READ_NB );
-//    set_int_code( ret );
-    case OPE_GPIO_PAD:          //  uint32_t bcm2835_gpio_pad(uint8_t group);
-//    set_ope_code( OPE_GPIO_PAD );
-//    set_int_code( ret );
-      ret = put_command( rb, str, len );
-      if ( ret != 0 )break;
-      ret = context_switch(100);
-      if( ret == 0 )
-      {
-        get_ope_code();
-        get_int_code();
-        int_ret = *(int *)(buff+1); 
-      }
-      break;
-        
-/*
-    case OPE_ST_READ:           //  uint64_t bcm2835_st_read(void);
-//    set_ope_code( OPE_ST_READ );
-//    set_long_code( ret );
-      ret = put_command( rb, str, len );
-      if ( ret != 0 )break;
-      ret = context_switch(100);
-      if( ret == 0 )
-      {
-        get_ope_code();
-        get_long_code();
-        uint64_t_ret = *(uint64_t *)(buff+1); 
-      }
-      break;
-*/
-    }
-    return ret;
-}
-/// \endcond 
-
 /// Send command and return result of execution(type int)
 /// \param[in] rb  ring_buff ( Java to bcm )
 /// \param[in] str local buffer
@@ -306,7 +102,7 @@ int send_command_1(struct ring_buff *rb, char *str, int len)
   if( context_switch(100) != 0 ) return -1;
   get_ope_code();
   get_byte_code();
- return *(int *)(buff+1); 
+  return *(int *)(buff+1); 
 }
 
 /// Send command and copy result into des(type byte[])
@@ -1124,7 +920,6 @@ uint8_t i2c_read(char* buf, uint32_t len)
 int ret;
 int dlen;
 char *dest;
-//int i;
    set_ope_code( OPE_I2C_READ );
    set_int_code( (int)buf );
    set_int_code( len );

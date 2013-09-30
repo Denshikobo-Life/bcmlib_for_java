@@ -17,9 +17,8 @@
     @par        History
     - 2013/09/18 Akira Hiramine
       -# Initial Version
-    - 20XX/XX/XX anyone
-      -# Add xxx 
-      -# Delete yyy 
+    - 2013/09/30 Akira Hiramine
+      -# Delete The useless code
 ******************************************************************************/
 #include <stdlib.h>
 #include <stdio.h>
@@ -260,7 +259,6 @@ void ope_gpio_set_eds(void)
 {
     get_byte_code();
     bcm2835_gpio_lev( *((uint8_t *)(buff+1)) );
-//    set_ope_code( OPE_GPIO_SET_EDS );
 }
 
 //void bcm2835_gpio_ren(uint8_t pin);
@@ -271,7 +269,6 @@ void ope_gpio_ren(void)
 {
     get_byte_code();
     bcm2835_gpio_ren( *((uint8_t *)(buff+1)) );
-//    set_ope_code( OPE_GPIO_REN );
 }
 
 //void bcm2835_gpio_clr_ren(uint8_t pin);
@@ -292,7 +289,6 @@ void ope_gpio_fen(void)
 {
     get_byte_code();
     bcm2835_gpio_fen( *((uint8_t *)(buff+1)) );
-//    set_ope_code( OPE_GPIO_FEN );
 }
 
 //void bcm2835_gpio_clr_fen(uint8_t pin);
@@ -303,7 +299,6 @@ void ope_gpio_clr_fen(void)
 {
     get_byte_code();
     bcm2835_gpio_clr_fen( *((uint8_t *)(buff+1)) );
-//    set_ope_code( OPE_GPIO_CLR_FEN );
 }
 
 //void bcm2835_gpio_hen(uint8_t pin);
@@ -324,7 +319,6 @@ void ope_gpio_clr_hen(void)
 {
     get_byte_code();
     bcm2835_gpio_clr_hen( *((uint8_t *)(buff+1)) );
-//    set_ope_code( OPE_GPIO_CLR_HEN );
 }
 
 //void bcm2835_gpio_len(uint8_t pin);
@@ -355,7 +349,6 @@ void ope_gpio_aren(void)
 {
     get_byte_code();
     bcm2835_gpio_aren( *((uint8_t *)(buff+1)) );
-//    set_ope_code( OPE_GPIO_AREN );
 }
 
 //void bcm2835_gpio_clr_aren(uint8_t pin);
@@ -366,7 +359,6 @@ void ope_gpio_clr_aren(void)
 {
     get_byte_code();
     bcm2835_gpio_clr_aren( *((uint8_t *)(buff+1)) );
-//    set_ope_code( OPE_GPIO_CLR_AREN );
 }
 
 //void bcm2835_gpio_afen(uint8_t pin);
@@ -377,7 +369,6 @@ void ope_gpio_afen(void)
 {
     get_byte_code();
     bcm2835_gpio_afen( *((uint8_t *)(buff+1)) );
-//    set_ope_code( OPE_GPIO_AFEN );
 }
 
 //void bcm2835_gpio_clr_afen(uint8_t pin);
@@ -388,7 +379,6 @@ void ope_gpio_clr_afen(void)
 {
     get_byte_code();
     bcm2835_gpio_clr_afen( *((uint8_t *)(buff+1)) );
-//    set_ope_code( OPE_GPIO_CLR_AFEN );
 }
 
 //void bcm2835_gpio_pud(uint8_t pud);
@@ -399,7 +389,6 @@ void ope_gpio_pud(void)
 {
     get_byte_code();
     bcm2835_gpio_pud( *((uint8_t *)(buff+1)) );
-//    set_ope_code( OPE_GPIO_PUD );
 }
 
 //void bcm2835_gpio_pudclk(uint8_t pin, uint8_t on);
@@ -411,7 +400,6 @@ void ope_gpio_pudclk(void)
     get_byte_code();
     get_byte_code();
     bcm2835_gpio_pudclk( *((uint8_t *)(buff+1)), *((uint8_t *)(buff+2)) );
-//    set_ope_code( OPE_GPIO_PUDCLK );
 }
 
 //void bcm2835_gpio_write(uint8_t pin, uint8_t on);
@@ -423,7 +411,6 @@ void ope_gpio_write(void)
     get_byte_code();
     get_byte_code();
     bcm2835_gpio_write( *((uint8_t *)(buff+1)), *((uint8_t *)(buff+2)) );
-//    set_ope_code( OPE_GPIO_WRITE );
 }
 
 //uint32_t bcm2835_gpio_pad(uint8_t group);
@@ -448,7 +435,6 @@ void ope_gpio_set_pad(void)
     get_byte_code();
     get_int_code();
     bcm2835_gpio_set_pad( *((uint8_t *)(buff+1)), *((uint32_t *)(buff+2)) );
-//    set_ope_code( OPE_GPIO_PAD );
 }
 
 //void bcm2835_delay (unsigned int millis);
@@ -459,7 +445,6 @@ void ope_delay(void)
 {
     get_int_code();
     bcm2835_delay( *((uint32_t *)(buff+1)) );
-//    set_ope_code( OPE_DELAY );
 }
 
 //void bcm2835_delayMicroseconds (uint64_t micros);
@@ -470,7 +455,6 @@ void ope_delaymicroseconds(void)
 {
     get_long_code();
     bcm2835_delayMicroseconds( *((uint64_t *)(buff+1)) );
-//    set_ope_code( OPE_DELAYMICROSECONDS );
 }
 
 //void bcm2835_gpio_write_multi(uint32_t mask, uint8_t on);
@@ -482,7 +466,6 @@ void ope_gpio_write_multi(void)
     get_int_code();
     get_byte_code();
     bcm2835_gpio_write_multi( *((uint32_t *)(buff+1)), *((uint8_t *)(buff+5)) );
-//    set_ope_code( OPE_GPIO_WRITE_MULTI );
 }
 
 //void bcm2835_gpio_write_mask(uint32_t value, uint32_t mask);
@@ -494,7 +477,6 @@ void ope_gpio_write_mask(void)
     get_int_code();
     get_int_code();
     bcm2835_gpio_write_mask( *((uint32_t *)(buff+1)), *((uint32_t *)(buff+5)) );
-//    set_ope_code( OPE_GPIO_WRITE_MASK );
 }
 
 //void bcm2835_gpio_set_pud(uint8_t pin, uint8_t pud);
@@ -506,7 +488,6 @@ void ope_gpio_set_pud(void)
     get_byte_code();
     get_byte_code();
     bcm2835_gpio_set_pud( *((uint8_t *)(buff+1)), *((uint8_t *)(buff+2)) );
-//    set_ope_code( OPE_GPIO_SET_PUD );
 }
 
 //void bcm2835_spi_begin(void);
@@ -516,7 +497,6 @@ void ope_gpio_set_pud(void)
 void ope_spi_begin(void)
 {
     bcm2835_spi_begin();
-//    set_ope_code( OPE_SPI_BEGIN );
 }
 
 //void bcm2835_spi_end(void);
@@ -526,7 +506,6 @@ void ope_spi_begin(void)
 void ope_spi_end(void)
 {
     bcm2835_spi_end();
-//    set_ope_code( OPE_SPI_END );
 }
 
 //void bcm2835_spi_setBitOrder(uint8_t order);
@@ -537,7 +516,6 @@ void ope_spi_setbitorder(void)
 {
     get_byte_code();
     bcm2835_spi_setBitOrder( *((uint8_t *)(buff+1)) );
-//    set_ope_code( OPE_SPI_SETBITORDER );
 }
 
 //void bcm2835_spi_setClockDivider(uint16_t divider);
@@ -548,7 +526,6 @@ void ope_spi_setclockdivider(void)
 {
     get_short_code();
     bcm2835_spi_setClockDivider( *((uint16_t *)(buff+1)) );
-//    set_ope_code( OPE_SPI_SETBITORDER );
 }
 
 //void bcm2835_spi_setDataMode(uint8_t mode);
@@ -559,7 +536,6 @@ void ope_spi_setdatamode(void)
 {
     get_byte_code();
     bcm2835_spi_setDataMode( *((uint8_t *)(buff+1)) );
-//    set_ope_code( OPE_SPI_SETDATAMODE );
 }
 
 //void bcm2835_spi_chipSelect(uint8_t cs);
@@ -570,7 +546,6 @@ void ope_spi_chipselect(void)
 {
     get_byte_code();
     bcm2835_spi_chipSelect( *((uint8_t *)(buff+1)) );
-//    set_ope_code( OPE_SPI_CHIPSELECT );
 }
 
 //void bcm2835_spi_setChipSelectPolarity(uint8_t cs, uint8_t active);
@@ -582,7 +557,6 @@ void ope_spi_setchipselectpolarity(void)
     get_byte_code();
     get_byte_code();
     bcm2835_spi_setChipSelectPolarity( *((uint8_t *)(buff+1)), *((uint8_t *)(buff+2)) );
-//    set_ope_code( OPE_SPI_SETCHIPSELECTPOLARITY );
 }
 
 //uint8_t bcm2835_spi_transfer(uint8_t value);
@@ -604,21 +578,17 @@ uint8_t ret;
 /// \par            Modify
 void ope_spi_transfernb(void)
 {
-//char *tbuf;
 char *rbuf;
 uint32_t len;
     get_int_code();
     get_int_code();
     get_int_code();
-//    tbuf = *(char **)(buff+1);
     rbuf = *(char **)(buff+5);
     len = *((uint32_t *)(buff+9));
-//    save_str( *((uint32_t *)(buff+9)) );
     bcm2835_spi_transfernb( bi_send_buff, bi_rec_buff, len );
     set_ope_code( OPE_SPI_TRANSFERNB );
     set_int_code( (int)rbuf );
     set_int_code( len );
-//    load_str( len );
 }
 
 //void bcm2835_spi_transfern(char* buf, uint32_t len);
@@ -627,19 +597,15 @@ uint32_t len;
 /// \par            Modify
 void ope_spi_transfern(void)
 {
-//char *buf;
 uint32_t len;
     get_int_code();
     get_int_code();
-//    buf = *(char **)(buff+1);
     len = *(uint32_t *)(buff+5);
-//    save_str( *((uint32_t *)(buff+9)) );
     bcm2835_spi_transfern( bi_send_buff, len );
     set_ope_code( OPE_SPI_TRANSFERN );
     set_int_code( (int)buff );
     set_int_code( len );
     strncpy( bi_rec_buff, bi_send_buff, len );
-    //    load_str( len );
 }
 
 //void bcm2835_spi_writenb(char* buf, uint32_t len);
@@ -648,15 +614,11 @@ uint32_t len;
 /// \par            Modify
 void ope_spi_writenb(void)
 {
-//char *buf;
 uint32_t len;
     get_int_code();
     get_int_code();
-//    buf = *(char **)(buff+1);
     len = *(uint32_t *)(buff+5);
-//    save_str( *((uint32_t *)(buff+9)) );
     bcm2835_spi_writenb( bi_send_buff, len );
-//    set_ope_code( OPE_SPI_WRITENB );
 }
 
 //void bcm2835_i2c_begin(void);
@@ -666,7 +628,6 @@ uint32_t len;
 void ope_i2c_begin(void)
 {
     bcm2835_i2c_begin();
-//    set_ope_code( OPE_I2C_BEGIN );
 }
 
 //void bcm2835_i2c_end(void);
@@ -676,7 +637,6 @@ void ope_i2c_begin(void)
 void ope_i2c_end(void)
 {
     bcm2835_i2c_end();
-//    set_ope_code( OPE_I2C_END );
 }
 
 //void bcm2835_i2c_setSlaveAddress(uint8_t addr);
@@ -687,7 +647,6 @@ void ope_i2c_setslaveaddress(void)
 {
     get_byte_code();
     bcm2835_i2c_setSlaveAddress( *((uint8_t *)(buff+1)) );
-//    set_ope_code( OPE_I2C_SETSLAVEADDRESS );
 }
 
 //void bcm2835_i2c_setClockDivider(uint16_t divider);
@@ -698,7 +657,6 @@ void ope_i2c_setclockdivider(void)
 {
     get_short_code();
     bcm2835_i2c_setClockDivider( *((uint16_t *)(buff+1)) );
-//    set_ope_code( OPE_I2C_SETCLOCKDIVIDER );
 }
 
 //void bcm2835_i2c_set_baudrate(uint32_t baudrate);
@@ -709,7 +667,6 @@ void ope_i2c_set_baudrate(void)
 {
     get_int_code();
     bcm2835_i2c_set_baudrate( *((uint32_t *)(buff+1)) );
-//    set_ope_code( OPE_I2C_SET_BAUDRATE );
 }
 
 //uint8_t bcm2835_i2c_write(const char * buf, uint32_t len);
@@ -727,9 +684,6 @@ uint32_t len;
     get_int_code();
     len = *(uint32_t *)(buff+5);
     
-    printf("buf=%p len=%d \n",buf,len);
-    printf("str=%s \n", bi_send_buff);
-    //    save_str( *((uint32_t *)(buff+5)) );
     ret = bcm2835_i2c_write( bi_send_buff, *((uint32_t *)(buff+5))  );
      printf("w_buff=%p rp=%d wp=%d \n",w_buff, w_buff->rp, w_buff->wp);
     printf("ope_code=%02x ret=%02x \n", OPE_I2C_WRITE, ret);
@@ -807,7 +761,6 @@ void ope_st_delay(void)
     get_long_code();
     get_long_code();
     bcm2835_st_delay( *((uint64_t *)(buff+1)), *((uint64_t *)(buff+9)) );
-//    set_ope_code( OPE_ST_DELAY );
 }
 
 /// \cond
@@ -845,130 +798,6 @@ int open_uart(void)
 
     return uart0_filestream;
 }
-
-/*
-int serialOpen (const char *device, const int baud)
-{
-  struct termios options ;
-  speed_t speed ;
-  int     status, fd ;
-
-  switch (baud)
-  {
-    case     50:	speed =     B50 ; break ;
-    case     75:	speed =     B75 ; break ;
-    case    110:	speed =    B110 ; break ;
-    case    134:	speed =    B134 ; break ;
-    case    150:	speed =    B150 ; break ;
-    case    200:	speed =    B200 ; break ;
-    case    300:	speed =    B300 ; break ;
-    case    600:	speed =    B600 ; break ;
-    case   1200:	speed =   B1200 ; break ;
-    case   1800:	speed =   B1800 ; break ;
-    case   2400:	speed =   B2400 ; break ;
-    case   4800:	speed =   B4800 ; break ;
-    case   9600:	speed =   B9600 ; break ;
-    case  19200:	speed =  B19200 ; break ;
-    case  38400:	speed =  B38400 ; break ;
-    case  57600:	speed =  B57600 ; break ;
-    case 115200:	speed = B115200 ; break ;
-    case 230400:	speed = B230400 ; break ;
-
-    default:
-      return -2 ;
-  }
-
-  if ((fd = open (device, O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK)) == -1)
-    return -1 ;
-
-  fcntl (fd, F_SETFL, O_RDWR) ;
-
-// Get and modify current options:
-
-  tcgetattr (fd, &options) ;
-
-  cfmakeraw   (&options) ;
-  cfsetispeed (&options, speed) ;
-  cfsetospeed (&options, speed) ;
-
-  options.c_cflag |= (CLOCAL | CREAD) ;
-  options.c_cflag &= ~PARENB ;
-  options.c_cflag &= ~CSTOPB ;
-  options.c_cflag &= ~CSIZE ;
-    options.c_cflag |= CS8 ;
-    options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG) ;
-    options.c_oflag &= ~OPOST ;
-
-    options.c_cc [VMIN]  =   0 ;
-    options.c_cc [VTIME] = 100 ;	// Ten seconds (100 deciseconds)
-
-  tcsetattr (fd, TCSANOW | TCSAFLUSH, &options) ;
-
-  ioctl (fd, TIOCMGET, &status);
-
-  status |= TIOCM_DTR ;
-  status |= TIOCM_RTS ;
-
-  ioctl (fd, TIOCMSET, &status);
-
-  usleep (10000) ;	// 10mS
-
-  return fd ;
-}
-
-void serialClose (const int fd)
-{
-  close (fd) ;
-}
-
-void serialFlush (const int fd)
-{
-  tcflush (fd, TCIOFLUSH) ;
-}
-
-void serialPutchar (const int fd, const unsigned char c)
-{
-  write (fd, &c, 1) ;
-}
-
- void serialPuts (const int fd, const char *s)
-{
-  write (fd, s, strlen (s)) ;
-}
-
-void serialPrintf (const int fd, const char *message, ...)
-{
-  va_list argp ;
-  char buffer [1024] ;
-
-  va_start (argp, message) ;
-    vsnprintf (buffer, 1023, message, argp) ;
-  va_end (argp) ;
-
-  serialPuts (fd, buffer) ;
-}
-
-int serialDataAvail (const int fd)
-{
-  int result ;
-
-  if (ioctl (fd, FIONREAD, &result) == -1)
-    return -1 ;
-
-  return result ;
-}
-
-int serialGetchar (const int fd)
-{
-  uint8_t x ;
-
-  if (read (fd, &x, 1) != 1)
-    return -1 ;
-
-  return ((int)x) & 0xFF ;
-}
- 
-*/
 
 //CONFIGURE THE UART
 //The flags (defined in /usr/include/termios.h - see http://pubs.opengroup.org/onlinepubs/007908799/xsh/termios.h.html):
@@ -1126,8 +955,6 @@ int main(int argc, char **argv)
         {
             get_ope_code();
             ope_code = buff[0];
-//            printf("rp=%d ope_code=%02x \n",r_buff->rp, buff[0]);
-//            printf("ope_code=%02x \n", ope_code);
             switch( ope_code )
             {
                 case OPE_INIT:
@@ -1326,11 +1153,9 @@ int main(int argc, char **argv)
                     goto BREAK_LINE;
                     break;
             }
- //           put_reply();
         }
         else
         {
-//            printf(" calc_data_size = 0 \n");
             usleep(0);
         }
     }

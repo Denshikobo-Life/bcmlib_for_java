@@ -1,4 +1,24 @@
-// bcm_interface.c
+/******************************************************************************/
+/*! @file       bcm_interface.c
+    @brief      This program create(& kill) child process(bcm2835_for_java)
+*******************************************************************************
+ * 
+ * 
+ * 
+*******************************************************************************
+    @date       2013/09/18
+    @author     Akira Hiramine
+    @par        Revision
+    $Id$
+    @par        Copyright
+    2013 Denshikobo-Life,Ltd. All rights reserved.
+*******************************************************************************
+    @par        History
+    - 2013/09/18 Akira Hiramine
+      -# Initial Version
+    - 2013/09/30 Akira Hiramine
+      -# Delete the useless codes
+******************************************************************************/
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -16,14 +36,17 @@
 
 #include "bcm_interface.h"
 
-//extern char **environ;
+/// \defgroup bcm_interface bcm_interface
+/// \ingroup PARENT
+/// @{
 
-int child;
-int fd;
-int local_sync_code;
+int child;    ///< pid of bcm2835_for_java
+int fd;       ///< file discripter of shared memory
+int local_sync_code;  ///< base of sync code
 
-int bi_status;
+int bi_status;    ///< status of bcm_interface
 
+/// \cond 
 void do_child( char *args )
 {
     char *new_argv[3];
@@ -34,13 +57,15 @@ void do_child( char *args )
     printf("execv failed %s %s\n",new_argv[0],new_argv[1]);
     return;
 }
+/// \endcond 
 
+/// Create shared memory, setup ring_buff, fork child process and call bcm2835_init().
+/// \param[in] args   shared file name like as "/tmp/shm"
+/// \par            Refer
+/// \par            Modify
 int bi_init( char *args )
 {
 char *s;
-//int len;
-//int pid;
-//int loop;
 
     if( args == NULL )
     {
@@ -102,6 +127,9 @@ char *s;
     return ope_init();    // bcm2835_init()
 }
 
+/// Call bcm2835_close(), Delete shared memory and kill child process.
+/// \par            Refer
+/// \par            Modify
 int bi_close(void)
 {
     ope_close();     // bcm2835_close())
@@ -116,5 +144,5 @@ int bi_close(void)
     return 0;
 }
 
-//#define PIN RPI_GPIO_P1_11
+/// @}
 

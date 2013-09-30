@@ -47,7 +47,8 @@ clean:
 	cd bcm_interface; make clean
 	cd common; make clean
 	cd bcm2835; make clean
-	cd doxy_bcmlib_for_java; rm -rf html
+	cd doxy_bcmlib_for_java; rm -rf html *~
+	rm *~
 
 .PHONEY: install
 install:

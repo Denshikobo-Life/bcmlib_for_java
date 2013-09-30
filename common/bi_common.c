@@ -16,9 +16,8 @@
     @par        History
     - 2013/09/18 Akira Hiramine
       -# Initial Version
-    - 20XX/XX/XX anyone
-      -# Add xxx 
-      -# Delete yyy 
+    - 2013/09/30 Akira Hiramine
+      -# Delete the useless codes
 ******************************************************************************/
 
 /** INCLUDES *******************************************************/
