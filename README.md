@@ -1,4 +1,4 @@
-bcmlib_for_java
+# bcmlib_for_java
 ===============
 
 Interface between Java app. and bcm2835 library(written by C)
@@ -9,23 +9,22 @@ Most functions which this program offers are the wrappers of the BCM2835 library
 
 This is Shared library. So, it may use also in languages other than Java. 
 
-Installation
+## Installation
 
-Procedure to setup this program is as follows. 
- $ git clone git://github.com/Denshikobo-Life/bcmlib_for_java.git
- $ cd bcmlib_for_java
- $ make
- $ make install
+Procedure to setup this program is as follows.   
+ $ git clone git://github.com/Denshikobo-Life/bcmlib_for_java.git  
+ $ cd bcmlib_for_java  
+ $ make  
+ $ make install  
 
-Test Blink.java
+## Test Blink.java
 
-Procedure to use this program is as follows. 
-$ cd bcmlib_for_java/examples
-$ ./build.sh Blink
-$ ./run.sh Blink
+Procedure to use this program is as follows.  
+$ cd bcmlib_for_java/examples  
+$ ./build.sh Blink  
+$ ./run.sh Blink  
 
-Other Infomation
+## Other Infomation
 
-Pleas see index.html at doxy_bcmlib_for_java/html/
-(It will create at Installation )
-
+Pleas see index.html at doxy_bcmlib_for_java/html/  
+(It will create at Installation )  
