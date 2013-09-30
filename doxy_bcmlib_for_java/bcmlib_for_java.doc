@@ -8,12 +8,32 @@
 ///
 /// \par Installation
 /// 
+<<<<<<< HEAD
 /// Procedure to use this program is as follows. 
 /// 
 /// \code
 /// $ git clone git://github.com/Denshikobo-Life/bcm_for_java.git
 /// $ cd bcm_for_java
 /// $ sudo make install
+=======
+/// Procedure to setup this program is as follows. 
+/// 
+/// \code
+/// $ git clone git://github.com/Denshikobo-Life/bcmlib_for_java.git
+/// $ cd bcmlib_for_java
+/// $ make
+/// $ make install
+/// \endcode
+///
+/// \par Test Blink.java
+/// 
+/// Procedure to use this program is as follows. 
+/// 
+/// \code
+/// $ cd bcmlib_for_java/examples
+/// $ ./build.sh Blink
+/// $ ./run.sh Blink
+>>>>>>> First commit
 /// \endcode
 ///
 /// \par Open Source Licensing GPL V2
