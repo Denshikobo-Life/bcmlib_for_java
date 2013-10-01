@@ -11,10 +11,6 @@ public class I2c {
         String send_string = "Send I2C";
         byte[] receive_buff = new byte[16];
         
-        System.out.println("-----------------------------------\n");
-        System.out.println(System.getProperties());
-        System.out.println("-----------------------------------\n");
-        
         bcm2835.bi_init(args[0]);
         bcm2835.i2c_begin();
         bcm2835.i2c_setSlaveAddress( (byte)0x30 );
@@ -22,16 +18,17 @@ public class I2c {
         bcm2835.ope_sync();
         byte ret = bcm2835.i2c_write( send_string, send_string.length() );
         System.out.print("i2c_write ="+(int)ret+"\n");
-        bcm2835.i2c_read( receive_buff, 10 );
+        ret = bcm2835.i2c_read( receive_buff, 10 );
+        System.out.print("i2c_read ="+(int)ret+"\n");
         bcm2835.i2c_end();
         String rec;
-        try {
+        if( ret == 0 )try {
             rec = new String( receive_buff , "UTF-8");
+            System.out.print("I2C receive="+rec +"\n");
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(I2c.class.getName()).log(Level.SEVERE, null, ex);
             rec = "";
         }
-        System.out.print("I2C receive="+rec +"\n");
         bcm2835.bi_close();
     }
 }

@@ -686,3 +686,8 @@ typedef enum
 /// \example Blink.java
 /// Blinks RPi GPIO pin 11 on and off
 ///
+
+///
+/// \example I2c.java
+/// Send (Recieve) sentence to(from) I2c slave(=0x30)
+///
