@@ -6,6 +6,7 @@ Interface between Java app. and bcm2835 library(written by C)
 This is the program designed to operate GPIO and I2C on Raspberry Pi board with Java.
 The existing C library for Raspberry Pi( BCM2835 offered by Mike McCauley ) is used in. 
 Most functions which this program offers are the wrappers of the BCM2835 library. 
+The great feature is that Java application does not run as root.
 
 This is Shared library. So, it may use also in languages other than Java. 
 
