@@ -35,6 +35,8 @@
 #ifndef BI_COMMON_H
 #define	BI_COMMON_H
 
+#define DEBUG
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
@@ -136,6 +138,17 @@ union long_char
 #define OPE_REPLY 0x6d
 #define OPE_SYNC 0x6e
 #define OPE_EXIT 0x70
+
+#define OPE_OPEN_UART 0x71
+#define OPE_CONFIG_UART 0x72
+#define OPE_SEND_UART 0x73
+#define OPE_RECEIVE_UART 0x74
+#define OPE_CLOSE_UART 0x75
+
+// Define new function codes
+//#define OPE_***** 0x76
+//#define OPE_***** 0x77
+//#define OPE_***** 0x78
 
 // context_switch_mode
 #define JAVA_TO_BCM 1

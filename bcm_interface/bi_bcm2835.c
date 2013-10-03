@@ -58,15 +58,18 @@ int put_command(struct ring_buff *rb, char *str, int len )
     return 0;
 }
 
-extern int local_sync_code;   ///< base sync code(counter)
+//extern int local_sync_code;   ///< base sync code(counter)
+
 /// Set sync_code, and clear reply_code.
 /// \par            Refer
 /// \par            Modify
 void set_sync( void )
 {
-    local_sync_code++;
-    *sync_code = local_sync_code;
-    *reply_code = 0;
+//    local_sync_code++;
+//    *sync_code = local_sync_code;
+//    *reply_code = 0;
+    *reply_code = *sync_code;
+    *sync_code += 1;
 }
 
 /// Check sync have done, or break on time_out condition.
@@ -75,17 +78,23 @@ void set_sync( void )
 /// \return         done:0, time_over:-1
 int check_sync( void )
 {
-int loop_count; 
+int loop_count;
+#ifdef DEBUG
+    printf("sync_code=0x%04x\n",*sync_code);
+#endif
     for(loop_count=0;loop_count < 10000 ;loop_count++)
     {
         if( *reply_code == *sync_code )
         {
-            printf("check_sync sync_code=%d reply_code=%d \n ", *sync_code, *reply_code);
+#ifdef DEBUG
+          printf("reply_code=0x%04x\n",*reply_code);
+#endif
             return 0;
         }
         usleep(1000);
     }
-    printf("check_sync sync_code=%d reply_code=%d \n ", *sync_code, *reply_code);
+    printf("Error sync_code=0x%04x\n",*sync_code);
+    printf("Error reply_code=0x%04x\n",*reply_code);
     return -1;
 }
 
@@ -98,10 +107,18 @@ int loop_count;
 /// \return         done:result , time_over:-1
 int send_command_1(struct ring_buff *rb, char *str, int len)
 {
+  int check_return;
+  set_sync();
+#ifdef DEBUG
+  printf("command=0x%02x \n",*buff);
+#endif
   if ( put_command( rb, str, len ) != 0 ) return -1;
-  if( context_switch(100) != 0 ) return -1;
+  check_return = check_sync();
+#ifdef DEBUG
+  printf("checksync=%d \n",check_return);
+#endif
   get_ope_code();
-  get_byte_code();
+  get_int_code();
   return *(int *)(buff+1); 
 }
 
@@ -734,7 +751,7 @@ uint8_t spi_transfer(uint8_t value)
 {
    set_ope_code( OPE_SPI_TRANSFER );
    set_byte_code( value );
-   return (uint8_t)send_command_1( w_buff, buff, wp );
+   return (uint8_t)put_command( w_buff, buff, wp );
 }
 
 // Writes (and reads) an number of bytes to SPI
@@ -886,7 +903,6 @@ void i2c_set_baudrate(uint32_t baudrate)
 uint8_t i2c_write(const char * buf, uint32_t len)
 {
 int ret;
-   printf("bi_send_buff=%s buf=%p \n", bi_send_buff, buf );
    set_ope_code( OPE_I2C_WRITE );
    set_int_code( (int)buf );
    set_int_code( len );
@@ -962,6 +978,7 @@ uint8_t i2c_read_register_rs(char* regaddr, char* buf, uint32_t len)
    set_byte_code( *regaddr );   // <== !!!!
    set_int_code( (int)buf );
    set_int_code( len );
+   set_sync();
 
   if ( put_command( w_buff, buff, wp ) != 0 ) return (uint8_t)(-1);
   if( context_switch(100) != 0 ) return (uint8_t)(-1);
@@ -979,6 +996,7 @@ uint8_t i2c_read_register_rs(char* regaddr, char* buf, uint32_t len)
 uint64_t st_read(void)
 {
    set_ope_code( OPE_ST_READ );
+   set_sync();
    if ( put_command( w_buff, buff, wp ) != 0 ) return (uint64_t)(-1);
    if( context_switch(100) != 0 ) return (uint64_t)(-1);
    get_ope_code();
@@ -1021,8 +1039,8 @@ int ret;
       get_ope_code();
       get_int_code();
       len = *(int *)(buff+1);
-      *(bi_rec_buff+len) = '\0';
-      printf("Reply %s \n", bi_rec_buff);
+//      *(bi_rec_buff+len) = '\0';
+//      printf("Reply %s \n", bi_rec_buff);
       return 0;
    }
    else
@@ -1055,6 +1073,93 @@ int ret;
    ret = put_command( w_buff, buff, wp );
    if ( ret == 0 ) ret = context_switch(10000);
    return ret;
+}
+
+/// Send ope_open_uart command, and return result of executin(type int)
+/// \par            Refer
+/// \par            Modify
+/// \return         done: file discripter , error:-1
+int ope_open_uart( void )
+{
+   set_ope_code( OPE_OPEN_UART );
+   return send_command_1( w_buff, buff, wp );
+}
+
+
+/// Send ope_config_uart command, and return result of executin(type int)
+/// \param[in] baud int
+/// \par            Refer
+/// \par            Modify
+/// \return         done: 0 , time out:-1
+void ope_config_uart( int baud )
+{
+   set_ope_code( OPE_CONFIG_UART );
+   set_int_code( baud );
+   (void)send_command_1( w_buff, buff, wp );
+}
+
+
+/// Send ope_send_uart command, and return result of executin(type int)
+/// \param[in]      buf const char *
+/// \param[in]      len uint32_t 
+/// \par            Refer
+/// \par            Modify
+/// \return         done: 0 , time out:-1
+char ope_send_uart( const char * buf, uint32_t len )
+{
+   set_ope_code( OPE_SEND_UART );
+   set_int_code( (int)buf );
+   set_int_code( len );
+   copy_str( bi_send_buff, (char *)buf, len );
+   return (char)send_command_1( w_buff, buff, wp );
+}
+
+/// Call ope_receive_uart command, and return result of executin(type int)
+/// \param[out] buf char * 
+/// \param[out] len uint32_t 
+/// \par            Refer
+/// \par            Refer
+/// \par            Modify
+/// \return         receive size or 0
+int ope_receive_uart(char* buf, uint32_t len)
+{
+int ret;
+int dlen;
+char *dest;
+  
+   set_ope_code( OPE_RECEIVE_UART );
+   set_int_code( (int)buf );
+   set_int_code( len );
+
+   set_sync();
+   ret = put_command( w_buff, buff, wp );
+   if ( ret != 0 ) return (uint8_t)(-1);
+   ret = check_sync();
+   if ( ret != 0 ) return (uint8_t)(-1);
+   get_ope_code();
+   get_int_code();  // dest
+   get_int_code();  // size
+   dest = *(char **)(buff+1);
+   dlen = *(uint32_t *)(buff+5);
+   if( (int)buf == (int)dest )
+   {
+     copy_str( dest, bi_rec_buff, dlen);
+     return dlen; 
+   }
+   else
+   {
+      return 0;
+   }
+}
+
+/// Send ope_close_uart command, and return result of executin(type int)
+/// \par            Refer
+/// \par            Modify
+/// \return         done: 0 , time out:-1
+void ope_close_uart( void )
+{
+  set_ope_code( OPE_CLOSE_UART );
+  (void)put_command( w_buff, buff, wp );
 }
 
 /// @}

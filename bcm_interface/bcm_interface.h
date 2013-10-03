@@ -37,8 +37,7 @@
 
 #include <stdint.h>
 
-#include "bi_common.h"
-//#include "ring_buffer.h"
+#include "../common/bi_common.h"
 #include "bcm2835.h"
 
 #ifdef __cplusplus
@@ -106,6 +105,11 @@ extern "C" {
     void st_delay(uint64_t offset_micros, uint64_t micros);
     int ope_hello( const char *str);
     int ope_exit( void );
+    int ope_open_uart( void );
+    void ope_config_uart( int baud );
+    char ope_send_uart( const char * buf, uint32_t len );
+    int ope_receive_uart( char* buf, uint32_t len );
+    void ope_close_uart( void );
 
 #ifdef __cplusplus
 }

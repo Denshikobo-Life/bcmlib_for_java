@@ -287,7 +287,7 @@ void get_long_code( void )
 void copy_str( char *dest, char* src, int len)
 {
 int i;
-   for( i=0; i<(len+1) ;i++ )
+   for( i=0; i<(len+1);i++ )
    {
       *(dest+i) = *(src+i);
    }

@@ -42,7 +42,8 @@
 
 int child;    ///< pid of bcm2835_for_java
 int fd;       ///< file discripter of shared memory
-int local_sync_code;  ///< base of sync code
+
+//int local_sync_code;  ///< base of sync code
 
 int bi_status;    ///< status of bcm_interface
 
@@ -99,8 +100,10 @@ char *s;
 
     sync_code = (int *)( bi_rec_buff + TEMP_BUFF_SIZE );
     reply_code = (int *)( sync_code + 1 );
-    local_sync_code = 0;
-    
+//    local_sync_code = 0;
+    *sync_code = 0;
+    *reply_code = 0;
+  
     child = fork();
     if( child < 0 )
     {

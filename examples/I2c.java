@@ -1,5 +1,3 @@
-package dkl.example;
-
 import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,8 +17,6 @@ public class I2c {
         byte ret = bcm2835.i2c_write( send_string, send_string.length() );
         System.out.print("i2c_write ="+(int)ret+"\n");
         ret = bcm2835.i2c_read( receive_buff, 10 );
-        System.out.print("i2c_read ="+(int)ret+"\n");
-        bcm2835.i2c_end();
         String rec;
         if( ret == 0 )try {
             rec = new String( receive_buff , "UTF-8");
@@ -29,6 +25,8 @@ public class I2c {
             Logger.getLogger(I2c.class.getName()).log(Level.SEVERE, null, ex);
             rec = "";
         }
+        System.out.print("i2c_read ="+(int)ret+"\n");
+        bcm2835.i2c_end();
         bcm2835.bi_close();
     }
 }

@@ -1,13 +1,39 @@
+/******************************************************************************/
+/*! @file       bcm2835.java
+    @brief      This program is bcm2835 lapper library for java application.
+*******************************************************************************
+ * 
+ * 
+ * 
+*******************************************************************************
+    @date       2013/09/18
+    @author     Akira Hiramine
+    @par        Revision
+    $Id$
+    @par        Copyright
+    2013 Denshikobo-Life,Ltd. All rights reserved.
+*******************************************************************************
+    @par        History
+    - 2013/09/18 Akira Hiramine
+      -# Initial Version
+    - 2013/10/01 Akira Hiramine
+      -# Add uart functions
+******************************************************************************/
 package dkl;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
 
+/// \defgroup bcm2835_java bcm2835_java
+/// \ingroup PARENT
+/// @{
+
+/// Wapper class of bcm_interface ibrary
 public class bcm2835 {
     
-public static final byte OPEN=0x1;
-public static final byte CLOSE=0x2;
+//public static final byte OPEN=0x1;
+//public static final byte CLOSE=0x2;
     
 /// This means pin HIGH, true, 3.3volts on a pin.
 public static final byte HIGH=0x1;
@@ -229,23 +255,23 @@ public static final byte    BCM2835_SPI_CS_NONE = 3; ///< No CS, control it your
 /// Clock divided is based on nominal base clock rate of 250MHz
 /// It is reported that (contrary to the documentation) any even divider may used.
 /// The frequencies shown for each divider have been confirmed by measurement
-public static final int    BCM2835_SPI_CLOCK_DIVIDER_65536 = 0;       ///< 65536 = 262.144us = 3.814697260kHz
-public static final int    BCM2835_SPI_CLOCK_DIVIDER_32768 = 32768;   ///< 32768 = 131.072us = 7.629394531kHz
-public static final int    BCM2835_SPI_CLOCK_DIVIDER_16384 = 16384;   ///< 16384 = 65.536us = 15.25878906kHz
-public static final int    BCM2835_SPI_CLOCK_DIVIDER_8192  = 8192;   ///< 8192 = 32.768us = 30/51757813kHz
-public static final int    BCM2835_SPI_CLOCK_DIVIDER_4096  = 4096;    ///< 4096 = 16.384us = 61.03515625kHz
-public static final int    BCM2835_SPI_CLOCK_DIVIDER_2048  = 2048;    ///< 2048 = 8.192us = 122.0703125kHz
-public static final int    BCM2835_SPI_CLOCK_DIVIDER_1024  = 1024;    ///< 1024 = 4.096us = 244.140625kHz
-public static final int    BCM2835_SPI_CLOCK_DIVIDER_512   = 512;     ///< 512 = 2.048us = 488.28125kHz
-public static final int    BCM2835_SPI_CLOCK_DIVIDER_256   = 256;     ///< 256 = 1.024us = 976.5625MHz
-public static final int    BCM2835_SPI_CLOCK_DIVIDER_128   = 128;     ///< 128 = 512ns = = 1.953125MHz
-public static final int    BCM2835_SPI_CLOCK_DIVIDER_64    = 64;      ///< 64 = 256ns = 3.90625MHz
-public static final int    BCM2835_SPI_CLOCK_DIVIDER_32    = 32;      ///< 32 = 128ns = 7.8125MHz
-public static final int    BCM2835_SPI_CLOCK_DIVIDER_16    = 16;      ///< 16 = 64ns = 15.625MHz
-public static final int    BCM2835_SPI_CLOCK_DIVIDER_8     = 8;       ///< 8 = 32ns = 31.25MHz
-public static final int    BCM2835_SPI_CLOCK_DIVIDER_4     = 4;       ///< 4 = 16ns = 62.5MHz
-public static final int    BCM2835_SPI_CLOCK_DIVIDER_2     = 2;       ///< 2 = 8ns = 125MHz, fastest you can get
-public static final int    BCM2835_SPI_CLOCK_DIVIDER_1     = 1;       ///< 0 = 262.144us = 3.814697260kHz, same as 0/65536
+public static final short    BCM2835_SPI_CLOCK_DIVIDER_65536 = 0;       ///< 65536 = 262.144us = 3.814697260kHz
+//public static final short    BCM2835_SPI_CLOCK_DIVIDER_32768 = 32768;   ///< 32768 = 131.072us = 7.629394531kHz
+public static final short    BCM2835_SPI_CLOCK_DIVIDER_16384 = 16384;   ///< 16384 = 65.536us = 15.25878906kHz
+public static final short    BCM2835_SPI_CLOCK_DIVIDER_8192  = 8192;   ///< 8192 = 32.768us = 30/51757813kHz
+public static final short    BCM2835_SPI_CLOCK_DIVIDER_4096  = 4096;    ///< 4096 = 16.384us = 61.03515625kHz
+public static final short    BCM2835_SPI_CLOCK_DIVIDER_2048  = 2048;    ///< 2048 = 8.192us = 122.0703125kHz
+public static final short    BCM2835_SPI_CLOCK_DIVIDER_1024  = 1024;    ///< 1024 = 4.096us = 244.140625kHz
+public static final short    BCM2835_SPI_CLOCK_DIVIDER_512   = 512;     ///< 512 = 2.048us = 488.28125kHz
+public static final short    BCM2835_SPI_CLOCK_DIVIDER_256   = 256;     ///< 256 = 1.024us = 976.5625MHz
+public static final short    BCM2835_SPI_CLOCK_DIVIDER_128   = 128;     ///< 128 = 512ns = = 1.953125MHz
+public static final short    BCM2835_SPI_CLOCK_DIVIDER_64    = 64;      ///< 64 = 256ns = 3.90625MHz
+public static final short    BCM2835_SPI_CLOCK_DIVIDER_32    = 32;      ///< 32 = 128ns = 7.8125MHz
+public static final short    BCM2835_SPI_CLOCK_DIVIDER_16    = 16;      ///< 16 = 64ns = 15.625MHz
+public static final short    BCM2835_SPI_CLOCK_DIVIDER_8     = 8;       ///< 8 = 32ns = 31.25MHz
+public static final short    BCM2835_SPI_CLOCK_DIVIDER_4     = 4;       ///< 4 = 16ns = 62.5MHz
+public static final short    BCM2835_SPI_CLOCK_DIVIDER_2     = 2;       ///< 2 = 8ns = 125MHz, fastest you can get
+public static final short    BCM2835_SPI_CLOCK_DIVIDER_1     = 1;       ///< 0 = 262.144us = 3.814697260kHz, same as 0/65536
 
 // Defines for I2C
 // GPIO register offsets from BCM2835_BSC*_BASE.
@@ -286,14 +312,14 @@ public static final int BCM2835_BSC_FIFO_SIZE=16; ///< BSC FIFO size
 /// \brief bcm2835I2CClockDivider
 /// Specifies the divider used to generate the I2C clock from the system clock.
 /// Clock divided is based on nominal base clock rate of 250MHz
-public static final int     BCM2835_I2C_CLOCK_DIVIDER_2500   = 2500;      ///< 2500 = 10us = 100 kHz
-public static final int     BCM2835_I2C_CLOCK_DIVIDER_626    = 626;       ///< 622 = 2.504us = 399.3610 kHz
-public static final int     BCM2835_I2C_CLOCK_DIVIDER_150    = 150;       ///< 150 = 60ns = 1.666 MHz (default at reset)
-public static final int     BCM2835_I2C_CLOCK_DIVIDER_148    = 148;       ///< 148 = 59ns = 1.689 MHz
+public static final short     BCM2835_I2C_CLOCK_DIVIDER_2500   = 2500;      ///< 2500 = 10us = 100 kHz
+public static final short     BCM2835_I2C_CLOCK_DIVIDER_626    = 626;       ///< 622 = 2.504us = 399.3610 kHz
+public static final short     BCM2835_I2C_CLOCK_DIVIDER_150    = 150;       ///< 150 = 60ns = 1.666 MHz (default at reset)
+public static final short     BCM2835_I2C_CLOCK_DIVIDER_148    = 148;       ///< 148 = 59ns = 1.689 MHz
 
 /// \brief bcm2835I2CReasonCodes
 /// Specifies the reason codes for the bcm2835_i2c_write and bcm2835_i2c_read functions.
-public static final byte  BCM2835_I2C_REASON_OK   		 = 0x00;      ///< Success
+public static final byte     BCM2835_I2C_REASON_OK   		 = 0x00;      ///< Success
 public static final byte     BCM2835_I2C_REASON_ERROR_NACK    = 0x01;      ///< Received a NACK
 public static final byte     BCM2835_I2C_REASON_ERROR_CLKT    = 0x02;      ///< Received Clock Stretch Timeout
 public static final byte     BCM2835_I2C_REASON_ERROR_DATA    = 0x04;      ///< Not all data is sent / received
@@ -316,97 +342,175 @@ public static final int BCM2835_ST_CHI =0x0008; ///< System Timer Counter Upper 
 
 
 // Defines for PWM
-public static final int BCM2835_PWM_CONTROL= 0;
-public static final int BCM2835_PWM_STATUS = 1;
-public static final int BCM2835_PWM0_RANGE = 4;
-public static final int BCM2835_PWM0_DATA  = 5;
-public static final int BCM2835_PWM1_RANGE = 8;
-public static final int BCM2835_PWM1_DATA  = 9;
+public static final int BCM2835_PWM_CONTROL= 0; ///< Address offset of PWM_CONTROL
+public static final int BCM2835_PWM_STATUS = 1; ///< Address offset of PWM_STATUS
+public static final int BCM2835_PWM0_RANGE = 4; ///< Address offset of PWM0_RANGE
+public static final int BCM2835_PWM0_DATA  = 5; ///< Address offset of PWM0_DATA
+public static final int BCM2835_PWM1_RANGE = 8; ///< Address offset of BCM2835_PWM1_RANGE
+public static final int BCM2835_PWM1_DATA  = 9; ///< Address offset of BCM2835_PWM1_DATA 
 
-public static final int BCM2835_PWMCLK_CNTL =    40;
-public static final int BCM2835_PWMCLK_DIV  =    41;
+public static final int BCM2835_PWMCLK_CNTL =    40; ///< Address offset of ???
+public static final int BCM2835_PWMCLK_DIV  =    41; ///< Address offset of ???
 
-public static final int BCM2835_PWM1_MS_MODE =   0x8000;  /// Run in MS mode
-public static final int BCM2835_PWM1_USEFIFO =   0x2000;  /// Data from FIFO
-public static final int BCM2835_PWM1_REVPOLAR=   0x1000;  /// Reverse polarity
-public static final int BCM2835_PWM1_OFFSTATE=   0x0800;  /// Ouput Off state
-public static final int BCM2835_PWM1_REPEATFF =  0x0400;  /// Repeat last value if FIFO empty
-public static final int BCM2835_PWM1_SERIAL  =   0x0200;  /// Run in serial mode
-public static final int BCM2835_PWM1_ENABLE   =  0x0100;  /// Channel Enable
+public static final int BCM2835_PWM1_MS_MODE =   0x8000;  ///< Run in MS mode
+public static final int BCM2835_PWM1_USEFIFO =   0x2000;  ///< Data from FIFO
+public static final int BCM2835_PWM1_REVPOLAR=   0x1000;  ///< Reverse polarity
+public static final int BCM2835_PWM1_OFFSTATE=   0x0800;  ///< Ouput Off state
+public static final int BCM2835_PWM1_REPEATFF =  0x0400;  ///< Repeat last value if FIFO empty
+public static final int BCM2835_PWM1_SERIAL  =   0x0200;  ///< Run in serial mode
+public static final int BCM2835_PWM1_ENABLE   =  0x0100;  ///< Channel Enable
 
-public static final int BCM2835_PWM0_MS_MODE =   0x0080;  /// Run in MS mode
-public static final int BCM2835_PWM0_USEFIFO =   0x0020;  /// Data from FIFO
-public static final int BCM2835_PWM0_REVPOLAR =  0x0010;  /// Reverse polarity
-public static final int BCM2835_PWM0_OFFSTATE =  0x0008;  /// Ouput Off state
-public static final int BCM2835_PWM0_REPEATFF =  0x0004;  /// Repeat last value if FIFO empty
-public static final int BCM2835_PWM0_SERIAL   =  0x0002;  /// Run in serial mode
-public static final int BCM2835_PWM0_ENABLE   =  0x0001;  /// Channel Enable
+public static final int BCM2835_PWM0_MS_MODE =   0x0080;  ///< Run in MS mode
+public static final int BCM2835_PWM0_USEFIFO =   0x0020;  ///< Data from FIFO
+public static final int BCM2835_PWM0_REVPOLAR =  0x0010;  ///< Reverse polarity
+public static final int BCM2835_PWM0_OFFSTATE =  0x0008;  ///< Ouput Off state
+public static final int BCM2835_PWM0_REPEATFF =  0x0004;  ///< Repeat last value if FIFO empty
+public static final int BCM2835_PWM0_SERIAL   =  0x0002;  ///< Run in serial mode
+public static final int BCM2835_PWM0_ENABLE   =  0x0001;  ///< Channel Enable
 
-    public static native int bi_init( String args );
-    public static native int bi_close();
-//    public static native int init();
-//    public static native int close();
-    public static native void set_debug(byte debug);
-    public static native int peri_read(int paddr);
-    public static native int peri_read_nb(int paddr);
-    public static native void peri_write(int paddr, int value);
-    public static native void peri_write_nb(int paddr, int value);
-    public static native void peri_set_bits(int paddr, int value, int mask);
-    public static native void gpio_fsel(byte pin, byte mode);
-    public static native void gpio_set(byte pin);
-    public static native void gpio_clr(byte pin);
-    public static native void gpio_set_multi(int mask);
-    public static native void gpio_clr_multi(int mask);
-    public static native byte gpio_lev(byte pin);
-    public static native byte gpio_eds(byte pin);
+/// Wapper of bi_init and bcm2835_init 
+public static native int bi_init( String args );
+/// Wapper of bi_close and bcm2835_close 
+public static native int bi_close();
+/// Wapper of bcm2835_set_debug 
+public static native void set_debug(byte debug);
+/// Wapper of bcm2835_peri_read 
+public static native int peri_read(int paddr);
+/// Wapper of bcm2835_peri_read_nb 
+public static native int peri_read_nb(int paddr);
+/// Wapper of bcm2835_peri_write 
+public static native void peri_write(int paddr, int value);
+/// Wapper of bcm2835_peri_write_nb 
+public static native void peri_write_nb(int paddr, int value);
+/// Wapper of bcm2835_peri_set_bits 
+public static native void peri_set_bits(int paddr, int value, int mask);
+/// Wapper of bcm2835_gpio_fsel 
+public static native void gpio_fsel(byte pin, byte mode);
+/// Wapper of bcm2835_gpio_set 
+public static native void gpio_set(byte pin);
+/// Wapper of bcm2835_gpio_clr 
+public static native void gpio_clr(byte pin);
+/// Wapper of bcm2835_gpio_set_multi 
+public static native void gpio_set_multi(int mask);
+/// Wapper of bcm2835_gpio_clr_multi 
+public static native void gpio_clr_multi(int mask);
+/// Wapper of bcm2835_gpio_lev 
+public static native byte gpio_lev(byte pin);
+/// Wapper of bcm2835_gpio_eds 
+public static native byte gpio_eds(byte pin);
+/// Wapper of bcm2835_gpio_set_eds 
     public static native void gpio_set_eds(byte pin);
+/// Wapper of bcm2835_gpio_ren 
     public static native void gpio_ren(byte pin);
+/// Wapper of bcm2835_gpio_clr_ren 
     public static native void gpio_clr_ren(byte pin);
+/// Wapper of bcm2835_gpio_fen 
     public static native void gpio_fen(byte pin);
+/// Wapper of bcm2835_gpio_clr_fen 
     public static native void gpio_clr_fen(byte pin);
+/// Wapper of bcm2835_gpio_hen 
     public static native void gpio_hen(byte pin);
+/// Wapper of bcm2835_gpio_clr_hen 
     public static native void gpio_clr_hen(byte pin);
+/// Wapper of bcm2835_gpio_len 
     public static native void gpio_len(byte pin);
+/// Wapper of bcm2835_gpio_clr_len 
     public static native void gpio_clr_len(byte pin);
+/// Wapper of bcm2835_gpio_aren 
     public static native void gpio_aren(byte pin);
+/// Wapper of bcm2835_gpio_clr_aren 
     public static native void gpio_clr_aren(byte pin);
+/// Wapper of bcm2835_gpio_afen 
     public static native void gpio_afen(byte pin);
+/// Wapper of bcm2835_gpio_clr_afen 
     public static native void gpio_clr_afen(byte pin);
+/// Wapper of bcm2835_gpio_pud 
     public static native void gpio_pud(byte pud);
+/// Wapper of bcm2835_gpio_pudclk 
     public static native void gpio_pudclk(byte pin, byte on);
+/// Wapper of bcm2835_gpio_pad 
     public static native  int gpio_pad(byte group);
+/// Wapper of bcm2835_gpio_set_pad 
     public static native void gpio_set_pad(byte group, int control);
+/// Wapper of bcm2835_delay 
     public static native void bi_delay (int millis);
+/// Wapper of bcm2835_delayMicroseconds 
     public static native void bi_delayMicroseconds (long micros);
+/// Wapper of bcm2835_gpio_write 
     public static native void gpio_write(byte pin, byte on);
+/// Wapper of bcm2835_gpio_write_multi 
     public static native void gpio_write_multi(int mask, byte on);
+/// Wapper of bcm2835_gpio_write_mask 
     public static native void gpio_write_mask(int value, int mask);
+/// Wapper of bcm2835_gpio_set_pud 
     public static native void gpio_set_pud(byte pin, byte pud);
+/// Wapper of bcm2835_spi_begin 
     public static native void spi_begin();
+/// Wapper of bcm2835_spi_end 
     public static native void spi_end();
+/// Wapper of bcm2835_spi_setBitOrder 
     public static native void spi_setBitOrder(byte order);
+/// Wapper of bcm2835_spi_setClockDivider 
     public static native void spi_setClockDivider(short divider);
+/// Wapper of bcm2835_spi_setDataMode 
     public static native void spi_setDataMode(byte mode);
+/// Wapper of bcm2835_spi_chipSelect 
     public static native void spi_chipSelect(byte cs);
+/// Wapper of bcm2835_spi_setChipSelectPolarity 
     public static native void spi_setChipSelectPolarity(byte cs, byte active);
+/// Wapper of bcm2835_spi_transfer 
     public static native byte spi_transfer(byte value);
-    public static native void spi_transfernb(String tbuf, String rbuf, int len);
+/// Wapper of bcm2835_spi_transfernb 
+    public static native void spi_transfernb(String tbuf, byte[] rbuf, int len);
+/// Wapper of bcm2835_spi_transfern 
     public static native void spi_transfern(String buf, int len);
+/// Wapper of bcm2835_spi_writenb 
     public static native void spi_writenb(String buf, int len);
+/// Wapper of bcm2835_i2c_begin 
     public static native void i2c_begin();
+/// Wapper of bcm2835_i2c_end 
     public static native void i2c_end();
+/// Wapper of bcm2835_i2c_setSlaveAddress 
     public static native void i2c_setSlaveAddress(byte addr);
+/// Wapper of bcm2835_i2c_setClockDivider 
     public static native void i2c_setClockDivider(short divider);
+/// Wapper of bcm2835_i2c_set_baudrate 
     public static native void i2c_set_baudrate(int baudrate);
+/// Wapper of bcm2835_i2c_write 
     public static native byte i2c_write(String buf, int len);
+/// Wapper of bcm2835_i2c_read 
     public static native byte i2c_read( byte[] buf, int len);
-    public static native byte i2c_read_register_rs(String regaddr, String buf, int len);
+/// Wapper of bcm2835_i2c_read_register_rs 
+    public static native byte i2c_read_register_rs(String regaddr, byte[] rbuf, int len);
+/// Wapper of bcm2835_st_read 
     public static native long st_read();
+/// Wapper of bcm2835_st_delay 
     public static native void st_delay(long offset_micros, long micros);
-//    public static native  int ope_hello( String str);
+/// Wapper of ope_sync 
     public static native  int ope_sync();
-    
+/// Wapper of ope_open_uart 
+    public static native  int ope_open_uart();
+/// Wapper of ope_config_uart 
+    public static native  void ope_config_uart(int baud);
+/// Wapper of ope_send_uart 
+    public static native  byte ope_send_uart(String buf, int len);
+/// Wapper of ope_receive_uart 
+    public static native  int ope_receive_uart(byte[] buf, int len);
+/// Wapper of ope_close_uart 
+    public static native  void ope_close_uart();
+
+/// \cond
+// Define new function
+/// Wapper of ope_**** 
+//    public static native  int ope_****();
+/// Wapper of ope_****
+//    public static native  int ope_****();
+/// Wapper of ope_****
+//    public static native  int ope_****();
+/// \endcond
+
     static {
         Native.register("bcm_interface");
     }
 }
+/// @}

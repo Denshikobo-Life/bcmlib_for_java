@@ -70,6 +70,8 @@ void bcm_init(void)
 {
     set_ope_code( OPE_INIT );
     set_int_code( bcm2835_init() );
+    mark_sync();
+    put_reply();
 }
 
 //int bcm2835_close(void);
@@ -81,6 +83,8 @@ void bcm_close(void)
 {
     set_ope_code( OPE_CLOSE );
     set_int_code( bcm2835_close() );
+    mark_sync();
+    put_reply();
 }
 
 //void  bcm2835_set_debug(uint8_t d);
@@ -106,6 +110,8 @@ uint32_t ret;
     ret = bcm2835_peri_read( (volatile uint32_t *)(buff+5) );   // buff:ope(1),ret(4),data
     set_ope_code( OPE_PERI_READ );
     set_int_code( ret );
+    mark_sync();
+    put_reply();
 }
 
 //uint32_t bcm2835_peri_read_nb(volatile uint32_t* paddr);
@@ -120,6 +126,8 @@ void ope_peri_read_nb(void)
     ret = bcm2835_peri_read( (volatile uint32_t *)(buff+5) );
     set_ope_code( OPE_PERI_READ_NB );
     set_int_code( ret );
+    mark_sync();
+    put_reply();
 }
 
 //void bcm2835_peri_write(volatile uint32_t* paddr, uint32_t value);
@@ -236,6 +244,8 @@ uint8_t ret;
     ret = bcm2835_gpio_lev( *((uint8_t *)(buff+1)) );
     set_ope_code( OPE_GPIO_LEV );
     set_byte_code( ret );
+    mark_sync();
+    put_reply();
 }
 
 //uint8_t bcm2835_gpio_eds(uint8_t pin);
@@ -249,6 +259,8 @@ uint8_t ret;
     ret = bcm2835_gpio_eds( *((uint8_t *)(buff+1)) );
     set_ope_code( OPE_GPIO_EDS );
     set_byte_code( ret );
+    mark_sync();
+    put_reply();
 }
 
 //void bcm2835_gpio_set_eds(uint8_t pin);
@@ -424,6 +436,8 @@ uint32_t ret;
     ret = bcm2835_gpio_pad( *((uint8_t *)(buff+1)) );
     set_ope_code( OPE_GPIO_PAD );
     set_int_code( ret );
+    mark_sync();
+    put_reply();
 }
 
 //void bcm2835_gpio_set_pad(uint8_t group, uint32_t control);
@@ -570,6 +584,8 @@ uint8_t ret;
     ret = bcm2835_spi_transfer( *((uint8_t *)(buff+1)) );
     set_ope_code( OPE_SPI_TRANSFER );
     set_byte_code( ret );
+    mark_sync();
+    put_reply();
 }
 
 //void bcm2835_spi_transfernb(char* tbuf, char* rbuf, uint32_t len);
@@ -589,6 +605,8 @@ uint32_t len;
     set_ope_code( OPE_SPI_TRANSFERNB );
     set_int_code( (int)rbuf );
     set_int_code( len );
+    mark_sync();
+    put_reply();
 }
 
 //void bcm2835_spi_transfern(char* buf, uint32_t len);
@@ -606,6 +624,8 @@ uint32_t len;
     set_int_code( (int)buff );
     set_int_code( len );
     strncpy( bi_rec_buff, bi_send_buff, len );
+    mark_sync();
+    put_reply();
 }
 
 //void bcm2835_spi_writenb(char* buf, uint32_t len);
@@ -672,11 +692,14 @@ void ope_i2c_set_baudrate(void)
 //uint8_t bcm2835_i2c_write(const char * buf, uint32_t len);
 /// Call bcm2835_i2c_write with 2 parameters
 /// \par            Refer
+///    - bi_send_buff
+///    - buf *(uint32_t **)(buff+1)
+///    - len *(uint32_t *)(buff+5)
 /// \par            Modify
 void ope_i2c_write(void)
 {
 uint8_t ret;
-uint32_t *buf;
+uint8_t *buf;
 uint32_t len;
 
     get_int_code();
@@ -685,11 +708,8 @@ uint32_t len;
     len = *(uint32_t *)(buff+5);
     
     ret = bcm2835_i2c_write( bi_send_buff, *((uint32_t *)(buff+5))  );
-     printf("w_buff=%p rp=%d wp=%d \n",w_buff, w_buff->rp, w_buff->wp);
-    printf("ope_code=%02x ret=%02x \n", OPE_I2C_WRITE, ret);
     set_ope_code( OPE_I2C_WRITE );
     set_byte_code( ret );
-    
     mark_sync();
     put_reply();
 }
@@ -697,7 +717,10 @@ uint32_t len;
 //uint8_t bcm2835_i2c_read(char* buf, uint32_t len);
 /// Call bcm2835_i2c_read with 1 parameter
 /// \par            Refer
+///    - buf *(uint32_t **)(buff+1)
+///    - len *(uint32_t *)(buff+5)
 /// \par            Modify
+///    - bi_receive_buff
 void ope_i2c_read(void)
 {
 uint8_t ret;
@@ -712,7 +735,6 @@ uint32_t len;
     set_byte_code( ret );
     set_int_code( (int)buf );
     set_int_code( len );
-
     mark_sync();
     put_reply();
 }
@@ -736,6 +758,7 @@ uint32_t len;
     set_byte_code( ret );
     set_int_code( (int)buf );
     set_int_code( len );
+    mark_sync();
     put_reply();
 }
 
@@ -749,6 +772,7 @@ uint64_t ret;
     ret = bcm2835_st_read();
     set_ope_code( OPE_ST_READ );
     set_long_code( ret );
+    mark_sync();
     put_reply();
 }
 
@@ -763,12 +787,11 @@ void ope_st_delay(void)
     bcm2835_st_delay( *((uint64_t *)(buff+1)), *((uint64_t *)(buff+9)) );
 }
 
-/// \cond
 //-------------------------
 //----- SETUP USART 0 -----
 //-------------------------
 //At bootup, pins 8 and 10 are already set to UART0_TXD, UART0_RXD (ie the alt0 function) respectively
-int uart0_filestream = -1;
+int uart0_filestream = -1;  ///< file discripter for /dev/ttyAMA0
 
 //OPEN THE UART
 //The flags (defined in fcntl.h):
@@ -783,20 +806,27 @@ int uart0_filestream = -1;
 //
 //	O_NOCTTY - When set and path identifies a terminal device, open() shall not cause the terminal device to become the controlling terminal for the process.
 
-int open_uart(void)
+/// Open uart 
+/// \par            Refer
+/// \par            Modify
+/// \return         done:fd, err:-1
+void open_uart(void)
 {
+  int flags;
     uart0_filestream = open("/dev/ttyAMA0", O_RDWR | O_NOCTTY | O_NDELAY );	//Open in non blocking read/write mode
     if (uart0_filestream == -1)
     {
-       //ERROR - CAN'T OPEN SERIAL PORT
        printf("Error - Unable to open UART.  Ensure it is not in use by another application\n");
-       return -1;
     }
 
 // Is it need?
-    fcntl (uart0_filestream, F_SETFL, O_RDWR) ;
+//  flags = fcntl(uart0_filestream, F_GETFL, 0);
+//  fcntl (uart0_filestream, F_SETFL, flags | O_NONBLOCK );
 
-    return uart0_filestream;
+  set_ope_code( OPE_OPEN_UART );
+  set_int_code( uart0_filestream );
+  mark_sync();
+  put_reply();
 }
 
 //CONFIGURE THE UART
@@ -811,10 +841,18 @@ int open_uart(void)
 //	PARODD - Odd parity (else even)
 
 
-int configure_uart( int baud )
+/// Configure uart
+/// \par            Refer
+/// \par            Modify
+void configure_uart( void )
 {
 struct termios options;
 speed_t speed;
+int baud;
+  
+  get_int_code();
+  baud = *(int *)(buff+1);
+
   switch (baud)
   {
     case     50:	speed =     B50 ; break ;
@@ -836,84 +874,136 @@ speed_t speed;
     case 115200:	speed = B115200 ; break ;
     case 230400:	speed = B230400 ; break ;
     default:
-      return -2 ;
+      speed =   B9600 ;
+      printf("baudrate error %d \n",baud);
+      break;
   }
-    
-    tcgetattr( uart0_filestream, &options );
-    options.c_cflag = speed | CS8 | CLOCAL | CREAD;		//<Set baud rate
-    options.c_iflag = IGNPAR;
-    options.c_oflag = 0;
-    options.c_lflag = 0;
-    tcflush(uart0_filestream, TCIFLUSH);
-    tcsetattr(uart0_filestream, TCSANOW, &options);
-    return 0;
+
+  tcgetattr( uart0_filestream, &options );
+  options.c_cflag = speed | CS8 | CLOCAL | CREAD;		//<Set baud rate
+  options.c_iflag = IGNPAR;
+  options.c_oflag = 0;
+  options.c_lflag = 0;
+  tcflush(uart0_filestream, TCIFLUSH);
+  tcsetattr(uart0_filestream, TCSANOW, &options);
+  mark_sync();
+  put_reply();
 }
 
 //----- TX BYTES -----
+/// \cond
 unsigned char tx_buffer[20];
 unsigned char *p_tx_buffer;
-	
-int send_uart(void)
+/// \endcond
+
+/// Send uart
+/// \par            Refer
+///    - bi_send_buff
+///    - buf *(uint32_t **)(buff+1)
+///    - len *(uint32_t *)(buff+5)
+/// \par            Modify
+void send_uart( void )
 {
-	p_tx_buffer = &tx_buffer[0];
-	*p_tx_buffer++ = 'H';
-	*p_tx_buffer++ = 'e';
-	*p_tx_buffer++ = 'l';
-	*p_tx_buffer++ = 'l';
-	*p_tx_buffer++ = 'o';
-	
-	if (uart0_filestream != -1)
-	{
-		int count = write(uart0_filestream, &tx_buffer[0], (p_tx_buffer - &tx_buffer[0]));
-		//Filestream, bytes to write, number of bytes to write
-		if (count < 0)
-		{
-			printf("UART TX error\n");
-		}
-	}
-        return 0;
+  int count;
+  char ret;
+  uint8_t *buf;
+  uint32_t len;
+
+/*
+  p_tx_buffer = &tx_buffer[0];
+  *p_tx_buffer++ = 'H';
+  *p_tx_buffer++ = 'e';
+  *p_tx_buffer++ = 'l';
+  *p_tx_buffer++ = 'l';
+  *p_tx_buffer++ = 'o';
+*/
+
+  if (uart0_filestream == -1)
+    {
+      printf("UART is not opened \n");
+      ret = -1;
+    }
+  else
+    {
+      get_int_code();
+      buf = *(uint32_t **)(buff+1);
+      get_int_code();
+      len = *(uint32_t *)(buff+5);
+      count = write(uart0_filestream, bi_send_buff, len);
+      if (count < 0)
+      {
+          printf("UART TX error\n");
+          ret = -1;
+      }
+      else{
+        ret = 0;
+      }
+    }
+    set_ope_code( OPE_SEND_UART );
+    set_byte_code( ret );
+    mark_sync();
+    put_reply();
 }
 
 //----- CHECK FOR ANY RX BYTES -----
-int receive_uart(void)
+/// Receive uart
+/// \par            Refer
+///    - destination *(uint8_t **)(buff+1)
+///    - max size *(uint32_t *)(buff+5)
+/// \par            Modify
+///    - bi_receive_buff
+///    - ope_code *(uint8_t *)buff
+///    - destination *(char **)(buff+1)
+///    - receive size *(uint32_t *)(buff+5)
+void receive_uart(void)
 {
-	if (uart0_filestream != -1)
-	{
-		// Read up to 255 characters from the port if they are there
-		unsigned char rx_buffer[256];
-		int rx_length = read(uart0_filestream, (void*)rx_buffer, 255);		//Filestream, buffer to store in, number of bytes to read (max)
-		if (rx_length < 0)
-		{
-			//An error occured (will occur if there are no bytes)
-		}
-		else if (rx_length == 0)
-		{
-			//No data waiting
-		}
-		else
-		{
-			//Bytes received
-			rx_buffer[rx_length] = '\0';
-			printf("%i bytes read : %s\n", rx_length, rx_buffer);
-		}
-	}
-        return 0;
+uint8_t *dest;
+uint32_t max_len;
+uint32_t rec_size;
+
+  get_int_code();
+  get_int_code();
+  dest = *(uint8_t **)(buff+1);
+  max_len = *(uint32_t *)(buff+5);  
+  if (uart0_filestream != -1)
+    {
+      rec_size = read(uart0_filestream, bi_rec_buff, max_len);
+      *(bi_rec_buff+rec_size) = '\0';
+    }
+  else
+    {
+      printf("UART is not opened \n");
+      rec_size = -1;
+    }
+    set_ope_code( OPE_RECEIVE_UART );
+    set_int_code( (uint32_t)dest );
+    set_int_code( rec_size );
+    mark_sync();
+    put_reply();
 }
 
 //----- CLOSE THE UART -----
+/// Close uart
+/// \par            Refer
+/// \par            Modify
+///   - uart0_filestream
 void close_uart(void)
 {
-    close(uart0_filestream);
+  close(uart0_filestream);
+  uart0_filestream = -1;
 }
 
+/// \cond
 int main(int argc, char **argv)
 {
     int fd;
     char *s;
     unsigned char ope_code;
     int len;
+    int baud;
+    char ret;
     
-    printf("bcm2835_for_java start \n");
+    printf("bcm2835_for_java ver1.00 start \n");
     if( argc != 2 )
     {
         printf("bcm2835_for_java needs 1 parameter like as /tmp/shared_mem\n");
@@ -955,7 +1045,10 @@ int main(int argc, char **argv)
         {
             get_ope_code();
             ope_code = buff[0];
-            switch( ope_code )
+#ifdef DEBUG
+          printf("bcm_for_java ope_code=0x%02x \n",ope_code);
+#endif
+          switch( ope_code )
             {
                 case OPE_INIT:
                     bcm_init();
@@ -1137,8 +1230,6 @@ int main(int argc, char **argv)
                 case OPE_HELLO:
                     get_int_code();
                     len = *(int *)(buff+1);
-                    *(bi_send_buff+len) = '\0';
-                    printf("Receive %s \n", bi_send_buff);
                     set_ope_code( OPE_REPLY );
                     strcpy( bi_rec_buff, "Nice to meet you." );
                     set_int_code( strlen(bi_rec_buff) );
@@ -1151,6 +1242,21 @@ int main(int argc, char **argv)
                     break;
                 case OPE_EXIT:
                     goto BREAK_LINE;
+                    break;
+                case OPE_OPEN_UART:
+                    open_uart();
+                    break;
+                case OPE_CONFIG_UART:
+                    configure_uart();
+                    break;
+                case OPE_SEND_UART:
+                    send_uart();
+                    break;
+                case OPE_RECEIVE_UART:
+                    receive_uart();
+                    break;
+                case OPE_CLOSE_UART:
+                    close_uart();
                     break;
             }
         }
