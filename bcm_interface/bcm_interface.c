@@ -130,12 +130,22 @@ char *s;
     return ope_init();    // bcm2835_init()
 }
 
+/// Call bcm2835_init().
+/// \param[in] args   shared file name like as "/tmp/shm"
+/// \par            Refer
+/// \par            Modify
+int bcm_init( void )
+{
+    return ope_init();    // bcm2835_init()
+}
+
 /// Call bcm2835_close(), Delete shared memory and kill child process.
 /// \par            Refer
 /// \par            Modify
 int bi_close(void)
 {
-    ope_close();     // bcm2835_close())
+
+  ope_close();     // bcm2835_close())
     if( ope_exit() != 0 )
     {
         printf("bi_status = %d  @bi_close \n",bi_status );
@@ -145,6 +155,14 @@ int bi_close(void)
     kill(child,SIGINT);
     printf("Close bcm_interface\n");
     return 0;
+}
+
+/// Call bcm2835_close()
+/// \par            Refer
+/// \par            Modify
+int bcm_close(void)
+{
+    return ope_close();    // bcm2835_close())
 }
 
 /// @}

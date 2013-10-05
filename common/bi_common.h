@@ -35,7 +35,7 @@
 #ifndef BI_COMMON_H
 #define	BI_COMMON_H
 
-#define DEBUG
+//#define DEBUG
 
 #ifdef	__cplusplus
 extern "C" {

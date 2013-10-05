@@ -372,6 +372,10 @@ public static final int BCM2835_PWM0_ENABLE   =  0x0001;  ///< Channel Enable
 public static native int bi_init( String args );
 /// Wapper of bi_close and bcm2835_close 
 public static native int bi_close();
+/// Wapper of bcm2835_init 
+public static native int bcm_init();
+/// Wapper of bcm2835_close 
+public static native int bcm_close();
 /// Wapper of bcm2835_set_debug 
 public static native void set_debug(byte debug);
 /// Wapper of bcm2835_peri_read 

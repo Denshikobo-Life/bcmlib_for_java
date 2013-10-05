@@ -95,6 +95,9 @@ int loop_count;
     }
     printf("Error sync_code=0x%04x\n",*sync_code);
     printf("Error reply_code=0x%04x\n",*reply_code);
+    printf("Error *buff=0x%02x\n",*buff);
+  
+    *reply_code=*sync_code;
     return -1;
 }
 
@@ -119,7 +122,6 @@ int send_command_1(struct ring_buff *rb, char *str, int len)
 #endif
   get_ope_code();
   get_int_code();
-  return *(int *)(buff+1); 
 }
 
 /// Send command and copy result into des(type byte[])
@@ -131,40 +133,26 @@ int send_command_1(struct ring_buff *rb, char *str, int len)
 /// \return         done:0, time_over:-1
 int send_command_2(struct ring_buff *rb, char *str, int len)
 {
-char *dest;
-uint32_t dlen;
+  int check_return;
+  char *dest;
+  uint32_t dlen;
+  set_sync();
   if ( put_command( rb, str, len ) != 0 ) return -1;
-  if( context_switch(100) != 0 ) return -1;
+  check_return = check_sync();
+#ifdef DEBUG
+  printf("checksync=%d \n",check_return);
+#endif
+//printf("r_buff=%p r_buff->wp=%d r_buff->rp=%d \n",r_buff,r_buff->wp,r_buff->rp);
   get_ope_code();
   get_int_code();
   get_int_code();
+//printf("r_buff=%p r_buff->wp=%d r_buff->rp=%d \n",r_buff,r_buff->wp,r_buff->rp);
+//dump_buff();
   dest = *(char **)(buff+1);
   dlen = *(uint32_t *)(buff+5);
+//  printf("dest=%p dlen=%d \n",dest,dlen);
   copy_str( dest, bi_rec_buff, dlen);
   return 0;
-}
-
-/// Send command, copy result into dest(type byte[]) and return result of execution(type uint8_t)
-/// \param[in] rb  ring_buff ( Java to bcm )
-/// \param[in] str local buffer
-/// \param[in] len byte size 
-/// \par            Refer
-/// \par            Modify
-/// \return         done:result , time_over:-1
-uint8_t send_command_3(struct ring_buff *rb, char *str, int len)
-{
-char *dest;
-uint32_t dlen;
-  if ( put_command( rb, str, len ) != 0 ) return -1;
-  if( context_switch(100) != 0 ) return -1;
-  get_ope_code();
-  get_byte_code();
-  get_int_code();
-  get_int_code();
-  dest = *(char **)(buff+2);
-  dlen = *(uint32_t *)(buff+6);
-  copy_str( dest, bi_rec_buff, dlen);
-  return *(uint8_t *)(buff+1); 
 }
 
 //  void  bcm2835_set_debug(uint8_t debug);
@@ -749,9 +737,21 @@ void spi_setDataMode(uint8_t mode)
 /// \par            Modify
 uint8_t spi_transfer(uint8_t value)
 {
-   set_ope_code( OPE_SPI_TRANSFER );
-   set_byte_code( value );
-   return (uint8_t)put_command( w_buff, buff, wp );
+  int check_return;
+  set_sync();
+  set_ope_code( OPE_SPI_TRANSFER );
+  set_byte_code( value );
+#ifdef DEBUG
+  printf("command=0x%02x \n",*buff);
+#endif
+  if ( put_command( w_buff, buff, wp ) != 0 ) return -1;
+  check_return = check_sync();
+#ifdef DEBUG
+  printf("checksync=%d \n",check_return);
+#endif
+  get_ope_code();
+  get_byte_code();
+  return *(buff+1);
 }
 
 // Writes (and reads) an number of bytes to SPI
@@ -764,12 +764,13 @@ uint8_t spi_transfer(uint8_t value)
 /// \par            Modify
 void spi_transfernb(char* tbuf, char* rbuf, uint32_t len)
 {
-   set_ope_code( OPE_SPI_TRANSFERNB );
-   set_int_code( (int)tbuf );
-   set_int_code( (int)rbuf );
-   set_int_code( len );
-   copy_str( bi_send_buff, tbuf, len );
-   (void)send_command_3( w_buff, buff, wp );
+  set_ope_code( OPE_SPI_TRANSFERNB );
+  set_int_code( (int)tbuf );
+  set_int_code( (int)rbuf );
+  set_int_code( len );
+//  printf("J nb tbuf=%p rbuf=%p len=%d \n",tbuf,rbuf,len);
+  copy_str( bi_send_buff, tbuf, len );
+  (void)send_command_2( w_buff, buff, wp );
 }
 
 // Writes (and reads) an number of bytes to SPI
@@ -784,8 +785,9 @@ void spi_transfern(char* tbuf, uint32_t len)
    set_ope_code( OPE_SPI_TRANSFERN );
    set_int_code( (int)tbuf );
    set_int_code( len );
+//  printf("J n tbuf=%p len=%d \n",tbuf,len);
    copy_str( bi_send_buff, tbuf, len );
-   (void)send_command_3( w_buff, buff, wp );
+   (void)send_command_2( w_buff, buff, wp );
 }
 
 // Writes (and reads) an number of bytes to SPI

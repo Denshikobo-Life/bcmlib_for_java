@@ -134,6 +134,7 @@ int get_ring_buff(struct ring_buff *rb, char *buff, int max_len)
     {
       if( len >= max_len)break;
       buff[len++] = rb->buff[r++];
+      r &= RING_POINTER_MASK;
     }
     rb->rp = r;
     return len;
@@ -297,7 +298,7 @@ int i;
 void dump_buff(void)
 {
     int i;
-    printf("wp=%d ",wp);
+    printf("wp=%d rp=%d ",wp,rp);
     for( i=0;i<wp;i++)
     {
       printf("%02x ",buff[i]);

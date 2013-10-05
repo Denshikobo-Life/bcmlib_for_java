@@ -31,10 +31,11 @@ all: bcm2835
 
 bcm2835: dkl/bcm2835.java lib/jna.jar lib/jna-platform.jar
 	javac -cp lib/jna.jar:lib/jna-platform.jar dkl/bcm2835.java
+	touch bcm2835
 
 .PHONEY: clean
 clean:
-	rm -f dkl/bcm2835.class dkl/*~
+	rm -f dkl/bcm2835.class dkl/*~ bcm2835
 
 .PHONEY: install
 install:

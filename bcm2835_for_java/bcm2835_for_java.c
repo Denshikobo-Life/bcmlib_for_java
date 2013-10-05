@@ -42,14 +42,15 @@ int bi_status;  ///< bcm_interface status STATUS_FINE|TIME_OUT|elss ?
 /// Copy local buff to shared ring_buff
 /// \par            Refer
 /// \par            Modify
-/// \return         done:0, time_over:-1
-int put_reply(void)
+void put_reply(void)
 {
     while( put_ring_buff( w_buff, buff, wp ) != 0 )
     {
-        if( context_switch(100) != 0 )return -1;
+        if( context_switch(100) != 0 )
+          {
+            printf("rttot @put_reply\n");
+          }
     }
-    return 0;
 }
 
 /// Mark reply_code
@@ -70,8 +71,8 @@ void bcm_init(void)
 {
     set_ope_code( OPE_INIT );
     set_int_code( bcm2835_init() );
-    mark_sync();
     put_reply();
+    mark_sync();
 }
 
 //int bcm2835_close(void);
@@ -83,8 +84,8 @@ void bcm_close(void)
 {
     set_ope_code( OPE_CLOSE );
     set_int_code( bcm2835_close() );
-    mark_sync();
     put_reply();
+    mark_sync();
 }
 
 //void  bcm2835_set_debug(uint8_t d);
@@ -110,8 +111,8 @@ uint32_t ret;
     ret = bcm2835_peri_read( (volatile uint32_t *)(buff+5) );   // buff:ope(1),ret(4),data
     set_ope_code( OPE_PERI_READ );
     set_int_code( ret );
-    mark_sync();
     put_reply();
+    mark_sync();
 }
 
 //uint32_t bcm2835_peri_read_nb(volatile uint32_t* paddr);
@@ -126,8 +127,8 @@ void ope_peri_read_nb(void)
     ret = bcm2835_peri_read( (volatile uint32_t *)(buff+5) );
     set_ope_code( OPE_PERI_READ_NB );
     set_int_code( ret );
-    mark_sync();
     put_reply();
+    mark_sync();
 }
 
 //void bcm2835_peri_write(volatile uint32_t* paddr, uint32_t value);
@@ -244,8 +245,8 @@ uint8_t ret;
     ret = bcm2835_gpio_lev( *((uint8_t *)(buff+1)) );
     set_ope_code( OPE_GPIO_LEV );
     set_byte_code( ret );
-    mark_sync();
     put_reply();
+    mark_sync();
 }
 
 //uint8_t bcm2835_gpio_eds(uint8_t pin);
@@ -259,8 +260,8 @@ uint8_t ret;
     ret = bcm2835_gpio_eds( *((uint8_t *)(buff+1)) );
     set_ope_code( OPE_GPIO_EDS );
     set_byte_code( ret );
-    mark_sync();
     put_reply();
+    mark_sync();
 }
 
 //void bcm2835_gpio_set_eds(uint8_t pin);
@@ -436,8 +437,8 @@ uint32_t ret;
     ret = bcm2835_gpio_pad( *((uint8_t *)(buff+1)) );
     set_ope_code( OPE_GPIO_PAD );
     set_int_code( ret );
-    mark_sync();
     put_reply();
+    mark_sync();
 }
 
 //void bcm2835_gpio_set_pad(uint8_t group, uint32_t control);
@@ -584,8 +585,8 @@ uint8_t ret;
     ret = bcm2835_spi_transfer( *((uint8_t *)(buff+1)) );
     set_ope_code( OPE_SPI_TRANSFER );
     set_byte_code( ret );
-    mark_sync();
     put_reply();
+    mark_sync();
 }
 
 //void bcm2835_spi_transfernb(char* tbuf, char* rbuf, uint32_t len);
@@ -594,19 +595,25 @@ uint8_t ret;
 /// \par            Modify
 void ope_spi_transfernb(void)
 {
+char *tbuf;
 char *rbuf;
 uint32_t len;
     get_int_code();
     get_int_code();
     get_int_code();
+    tbuf = *(char **)(buff+1);
     rbuf = *(char **)(buff+5);
     len = *((uint32_t *)(buff+9));
-    bcm2835_spi_transfernb( bi_send_buff, bi_rec_buff, len );
+//  printf("B nb tbuf=%p rbuf=%p len=%d \n",tbuf,rbuf,len);
+  bcm2835_spi_transfernb( bi_send_buff, bi_rec_buff, len );
     set_ope_code( OPE_SPI_TRANSFERNB );
     set_int_code( (int)rbuf );
     set_int_code( len );
+//dump_buff();
+//printf("w_buff=%p w_buff->wp=%d w_buff->rp=%d \n",w_buff,w_buff->wp,w_buff->rp);
+  put_reply();
+//printf("w_buff=%p w_buff->wp=%d w_buff->rp=%d \n",w_buff,w_buff->wp,w_buff->rp);
     mark_sync();
-    put_reply();
 }
 
 //void bcm2835_spi_transfern(char* buf, uint32_t len);
@@ -616,16 +623,22 @@ uint32_t len;
 void ope_spi_transfern(void)
 {
 uint32_t len;
+char *buf;
     get_int_code();
     get_int_code();
+    buf = *(char **)(buff+1);
     len = *(uint32_t *)(buff+5);
+//  printf("B n buf=%p len=%d \n",buf,len);
     bcm2835_spi_transfern( bi_send_buff, len );
     set_ope_code( OPE_SPI_TRANSFERN );
-    set_int_code( (int)buff );
+    set_int_code( (int)buf );
     set_int_code( len );
     strncpy( bi_rec_buff, bi_send_buff, len );
+//dump_buff();
+//printf("w_buff=%p w_buff->wp=%d w_buff->rp=%d \n",w_buff,w_buff->wp,w_buff->rp);
+  put_reply();
+//printf("w_buff=%p w_buff->wp=%d w_buff->rp=%d \n",w_buff,w_buff->wp,w_buff->rp);
     mark_sync();
-    put_reply();
 }
 
 //void bcm2835_spi_writenb(char* buf, uint32_t len);
@@ -710,8 +723,8 @@ uint32_t len;
     ret = bcm2835_i2c_write( bi_send_buff, *((uint32_t *)(buff+5))  );
     set_ope_code( OPE_I2C_WRITE );
     set_byte_code( ret );
-    mark_sync();
     put_reply();
+    mark_sync();
 }
 
 //uint8_t bcm2835_i2c_read(char* buf, uint32_t len);
@@ -735,8 +748,8 @@ uint32_t len;
     set_byte_code( ret );
     set_int_code( (int)buf );
     set_int_code( len );
-    mark_sync();
     put_reply();
+    mark_sync();
 }
 
 //uint8_t bcm2835_i2c_read_register_rs(char* regaddr, char* buf, uint32_t len);
@@ -758,7 +771,6 @@ uint32_t len;
     set_byte_code( ret );
     set_int_code( (int)buf );
     set_int_code( len );
-    mark_sync();
     put_reply();
 }
 
@@ -772,8 +784,8 @@ uint64_t ret;
     ret = bcm2835_st_read();
     set_ope_code( OPE_ST_READ );
     set_long_code( ret );
-    mark_sync();
     put_reply();
+    mark_sync();
 }
 
 //void bcm2835_st_delay(uint64_t offset_micros, uint64_t micros);
@@ -825,8 +837,8 @@ void open_uart(void)
 
   set_ope_code( OPE_OPEN_UART );
   set_int_code( uart0_filestream );
-  mark_sync();
   put_reply();
+  mark_sync();
 }
 
 //CONFIGURE THE UART
@@ -886,8 +898,8 @@ int baud;
   options.c_lflag = 0;
   tcflush(uart0_filestream, TCIFLUSH);
   tcsetattr(uart0_filestream, TCSANOW, &options);
-  mark_sync();
   put_reply();
+  mark_sync();
 }
 
 //----- TX BYTES -----
@@ -941,8 +953,8 @@ void send_uart( void )
     }
     set_ope_code( OPE_SEND_UART );
     set_byte_code( ret );
-    mark_sync();
     put_reply();
+    mark_sync();
 }
 
 //----- CHECK FOR ANY RX BYTES -----
@@ -978,8 +990,8 @@ uint32_t rec_size;
     set_ope_code( OPE_RECEIVE_UART );
     set_int_code( (uint32_t)dest );
     set_int_code( rec_size );
-    mark_sync();
     put_reply();
+    mark_sync();
 }
 
 //----- CLOSE THE UART -----
@@ -1047,6 +1059,7 @@ int main(int argc, char **argv)
             ope_code = buff[0];
 #ifdef DEBUG
           printf("bcm_for_java ope_code=0x%02x \n",ope_code);
+          printf("r_buff->wp=%d r_buff->rp=%d \n",r_buff->wp,r_buff->rp);
 #endif
           switch( ope_code )
             {
@@ -1233,8 +1246,8 @@ int main(int argc, char **argv)
                     set_ope_code( OPE_REPLY );
                     strcpy( bi_rec_buff, "Nice to meet you." );
                     set_int_code( strlen(bi_rec_buff) );
-                    mark_sync();
                     put_reply();
+                    mark_sync();
                     usleep(0);
                     break;
                 case OPE_SYNC:
