@@ -255,23 +255,23 @@ public static final byte    BCM2835_SPI_CS_NONE = 3; ///< No CS, control it your
 /// Clock divided is based on nominal base clock rate of 250MHz
 /// It is reported that (contrary to the documentation) any even divider may used.
 /// The frequencies shown for each divider have been confirmed by measurement
-public static final short    BCM2835_SPI_CLOCK_DIVIDER_65536 = 0;       ///< 65536 = 262.144us = 3.814697260kHz
-//public static final short    BCM2835_SPI_CLOCK_DIVIDER_32768 = 32768;   ///< 32768 = 131.072us = 7.629394531kHz
-public static final short    BCM2835_SPI_CLOCK_DIVIDER_16384 = 16384;   ///< 16384 = 65.536us = 15.25878906kHz
-public static final short    BCM2835_SPI_CLOCK_DIVIDER_8192  = 8192;   ///< 8192 = 32.768us = 30/51757813kHz
-public static final short    BCM2835_SPI_CLOCK_DIVIDER_4096  = 4096;    ///< 4096 = 16.384us = 61.03515625kHz
-public static final short    BCM2835_SPI_CLOCK_DIVIDER_2048  = 2048;    ///< 2048 = 8.192us = 122.0703125kHz
-public static final short    BCM2835_SPI_CLOCK_DIVIDER_1024  = 1024;    ///< 1024 = 4.096us = 244.140625kHz
-public static final short    BCM2835_SPI_CLOCK_DIVIDER_512   = 512;     ///< 512 = 2.048us = 488.28125kHz
-public static final short    BCM2835_SPI_CLOCK_DIVIDER_256   = 256;     ///< 256 = 1.024us = 976.5625MHz
-public static final short    BCM2835_SPI_CLOCK_DIVIDER_128   = 128;     ///< 128 = 512ns = = 1.953125MHz
-public static final short    BCM2835_SPI_CLOCK_DIVIDER_64    = 64;      ///< 64 = 256ns = 3.90625MHz
-public static final short    BCM2835_SPI_CLOCK_DIVIDER_32    = 32;      ///< 32 = 128ns = 7.8125MHz
-public static final short    BCM2835_SPI_CLOCK_DIVIDER_16    = 16;      ///< 16 = 64ns = 15.625MHz
-public static final short    BCM2835_SPI_CLOCK_DIVIDER_8     = 8;       ///< 8 = 32ns = 31.25MHz
-public static final short    BCM2835_SPI_CLOCK_DIVIDER_4     = 4;       ///< 4 = 16ns = 62.5MHz
-public static final short    BCM2835_SPI_CLOCK_DIVIDER_2     = 2;       ///< 2 = 8ns = 125MHz, fastest you can get
-public static final short    BCM2835_SPI_CLOCK_DIVIDER_1     = 1;       ///< 0 = 262.144us = 3.814697260kHz, same as 0/65536
+public static final char    BCM2835_SPI_CLOCK_DIVIDER_65536 = 0;       ///< 65536 = 262.144us = 3.814697260kHz
+public static final char    BCM2835_SPI_CLOCK_DIVIDER_32768 = 32768;   ///< 32768 = 131.072us = 7.629394531kHz
+public static final char    BCM2835_SPI_CLOCK_DIVIDER_16384 = 16384;   ///< 16384 = 65.536us = 15.25878906kHz
+public static final char    BCM2835_SPI_CLOCK_DIVIDER_8192  = 8192;   ///< 8192 = 32.768us = 30/51757813kHz
+public static final char    BCM2835_SPI_CLOCK_DIVIDER_4096  = 4096;    ///< 4096 = 16.384us = 61.03515625kHz
+public static final char    BCM2835_SPI_CLOCK_DIVIDER_2048  = 2048;    ///< 2048 = 8.192us = 122.0703125kHz
+public static final char    BCM2835_SPI_CLOCK_DIVIDER_1024  = 1024;    ///< 1024 = 4.096us = 244.140625kHz
+public static final char    BCM2835_SPI_CLOCK_DIVIDER_512   = 512;     ///< 512 = 2.048us = 488.28125kHz
+public static final char    BCM2835_SPI_CLOCK_DIVIDER_256   = 256;     ///< 256 = 1.024us = 976.5625MHz
+public static final char    BCM2835_SPI_CLOCK_DIVIDER_128   = 128;     ///< 128 = 512ns = = 1.953125MHz
+public static final char    BCM2835_SPI_CLOCK_DIVIDER_64    = 64;      ///< 64 = 256ns = 3.90625MHz
+public static final char    BCM2835_SPI_CLOCK_DIVIDER_32    = 32;      ///< 32 = 128ns = 7.8125MHz
+public static final char    BCM2835_SPI_CLOCK_DIVIDER_16    = 16;      ///< 16 = 64ns = 15.625MHz
+public static final char    BCM2835_SPI_CLOCK_DIVIDER_8     = 8;       ///< 8 = 32ns = 31.25MHz
+public static final char    BCM2835_SPI_CLOCK_DIVIDER_4     = 4;       ///< 4 = 16ns = 62.5MHz
+public static final char    BCM2835_SPI_CLOCK_DIVIDER_2     = 2;       ///< 2 = 8ns = 125MHz, fastest you can get
+public static final char    BCM2835_SPI_CLOCK_DIVIDER_1     = 1;       ///< 0 = 262.144us = 3.814697260kHz, same as 0/65536
 
 // Defines for I2C
 // GPIO register offsets from BCM2835_BSC*_BASE.
@@ -455,7 +455,7 @@ public static native byte gpio_eds(byte pin);
 /// Wapper of bcm2835_spi_setBitOrder 
     public static native void spi_setBitOrder(byte order);
 /// Wapper of bcm2835_spi_setClockDivider 
-    public static native void spi_setClockDivider(short divider);
+    public static native void spi_setClockDivider(char divider);
 /// Wapper of bcm2835_spi_setDataMode 
     public static native void spi_setDataMode(byte mode);
 /// Wapper of bcm2835_spi_chipSelect 

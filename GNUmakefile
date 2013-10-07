@@ -38,7 +38,6 @@ all:
 	cd bcm_interface; make
 	cd bcm2835_for_java; make
 	cd bcm2835; make
-	cd doxy_bcmlib_for_java; doxygen
 
 .PHONEY: clean
 clean:
@@ -65,3 +64,9 @@ uninstall:
 	cd bcm_interface; make uninstall
 	cd bcm2835_for_java; make uninstall
 	cd bcm2835; make uninstall
+
+.PHONEY: doc
+doc:
+	echo "[Doc]"
+	cd doxy_bcmlib_for_java; doxygen; mv html bcmlib_doc
+	cd bcm2835_for_java; doxygen; mv html bcm2835_doc

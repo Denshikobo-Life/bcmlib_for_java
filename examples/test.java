@@ -89,7 +89,7 @@ public class Test {
 
       System.out.print("Test SPI\n");
       bcm2835.spi_begin();
-      bcm2835.spi_setClockDivider(bcm2835.BCM2835_SPI_CLOCK_DIVIDER_512);
+      bcm2835.spi_setClockDivider(bcm2835.BCM2835_SPI_CLOCK_DIVIDER_32768);
       bcm2835.spi_setDataMode(bcm2835.BCM2835_SPI_MODE0);
       bcm2835.spi_chipSelect(bcm2835.BCM2835_SPI_CS0);
       bcm2835.spi_setChipSelectPolarity(bcm2835.BCM2835_SPI_CS1, (byte)1);

@@ -45,7 +45,7 @@ bcm2835_for_java: bcm2835_for_java.o bcm2835.o
 
 .PHONEY: clean
 clean:
-	rm -f $(OBJ)  *.o *~ core tags *.bak
+	rm -rf $(OBJ)  *.o *~ core tags *.bak html
 
 .PHONEY: install
 install:

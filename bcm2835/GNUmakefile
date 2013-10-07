@@ -35,7 +35,7 @@ bcm2835: dkl/bcm2835.java lib/jna.jar lib/jna-platform.jar
 
 .PHONEY: clean
 clean:
-	rm -f dkl/bcm2835.class dkl/*~ bcm2835
+	rm -f ./*~ dkl/bcm2835.class dkl/*~ bcm2835
 
 .PHONEY: install
 install:

@@ -17,6 +17,7 @@ Procedure to setup this program is as follows.
  $ cd bcmlib_for_java  
  $ make  
  $ make install  
+ $ make doc  
 
 ## Test Blink.java
 
@@ -27,5 +28,6 @@ $ ./run.sh Blink
 
 ## Other Infomation
 
-Pleas see index.html at doxy_bcmlib_for_java/html/  
-(It will create at Installation )  
+Pleas see two index.html at doxy_bcmlib_for_java/html/  
+and bcm2835_for_java/html
+(It will create at "make doc" operation )  

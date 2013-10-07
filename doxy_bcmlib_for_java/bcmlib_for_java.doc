@@ -12,9 +12,10 @@
 /// Procedure to use this program is as follows. 
 /// 
 /// \code
-/// $ git clone git://github.com/Denshikobo-Life/bcm_for_java.git
-/// $ cd bcm_for_java
-/// $ sudo make install
+/// $ git clone git://github.com/Denshikobo-Life/bcmlib_for_java.git
+/// $ cd bcmlib_for_java
+/// $ make 
+/// $ make install
 /// \endcode
 ///
 /// \par Open Source Licensing GPL V2
