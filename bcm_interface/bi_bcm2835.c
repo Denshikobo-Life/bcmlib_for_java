@@ -18,6 +18,11 @@
       -# Initial Version
     - 2013/09/30 Akira Hiramine
       -# Delete the useless codes
+    - 2015/07/24
+      -# Bug fix  send_command_1 at 128l
+      -# Add uint8_t send_command_3
+      -# Bug fix gpio_lev at 363l
+      -# Bug fix gpio_eds at 377l
 ******************************************************************************/
 
 #include <stdlib.h>
@@ -122,6 +127,7 @@ int send_command_1(struct ring_buff *rb, char *str, int len)
 #endif
   get_ope_code();
   get_int_code();
+  return *(uint32_t *)(buff+1);     // Append @2015.07.24 
 }
 
 /// Send command and copy result into des(type byte[])
@@ -153,6 +159,23 @@ int send_command_2(struct ring_buff *rb, char *str, int len)
 //  printf("dest=%p dlen=%d \n",dest,dlen);
   copy_str( dest, bi_rec_buff, dlen);
   return 0;
+}
+
+uint8_t send_command_3(struct ring_buff *rb, char *str, int len)
+{
+  int check_return;
+  set_sync();
+#ifdef DEBUG
+  printf("command=0x%02x \n",*buff);
+#endif
+  if ( put_command( rb, str, len ) != 0 ) return -1;
+  check_return = check_sync();
+#ifdef DEBUG
+  printf("checksync=%d \n",check_return);
+#endif
+  get_ope_code();
+  get_byte_code();
+  return *(uint8_t *)(buff+1);
 }
 
 //  void  bcm2835_set_debug(uint8_t debug);
@@ -337,7 +360,7 @@ uint8_t gpio_lev(uint8_t pin)
 {
    set_ope_code( OPE_GPIO_LEV );
    set_byte_code( pin );
-   return (uint8_t)send_command_1( w_buff, buff, wp );
+   return (uint8_t)send_command_3( w_buff, buff, wp );
 }
 
 // See if an event detection bit is set
@@ -351,7 +374,7 @@ uint8_t gpio_eds(uint8_t pin)
 {
    set_ope_code( OPE_GPIO_EDS );
    set_byte_code( pin );
-   return send_command_1( w_buff, buff, wp );
+   return send_command_3( w_buff, buff, wp );
 }
 
 // Write a 1 to clear the bit in EDS
