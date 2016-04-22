@@ -908,7 +908,7 @@ uint8_t bcm2835_i2c_read(char* buf, uint32_t len)
     bcm2835_peri_write_nb(dlen, len);
     /* Start read */
     bcm2835_peri_write_nb(control, BCM2835_BSC_C_I2CEN | BCM2835_BSC_C_ST | BCM2835_BSC_C_READ);
-    
+
     /* wait for transfer to complete */
     while (!(bcm2835_peri_read_nb(status) & BCM2835_BSC_S_DONE))
     {
