@@ -739,8 +739,8 @@ uint8_t bcm2835_i2c_read(char* buf, uint32_t len)
     // Clear FIFO
     bcm2835_peri_set_bits(control, BCM2835_BSC_C_CLEAR_1 , BCM2835_BSC_C_CLEAR_1 );
     // Clear Status
-	bcm2835_peri_write_nb(status, BCM2835_BSC_S_CLKT | BCM2835_BSC_S_ERR | BCM2835_BSC_S_DONE);
-	// Set Data Length
+    bcm2835_peri_write_nb(status, BCM2835_BSC_S_CLKT | BCM2835_BSC_S_ERR | BCM2835_BSC_S_DONE);
+    // Set Data Length
     bcm2835_peri_write_nb(dlen, len);
 
 //    printf("bcm2835_peri_read_nb(clkt)=0x%08x ",bcm2835_peri_read_nb(clkt));
@@ -775,19 +775,19 @@ uint8_t bcm2835_i2c_read(char* buf, uint32_t len)
     // Received a NACK
     if (bcm2835_peri_read(status) & BCM2835_BSC_S_ERR)
     {
-		reason = BCM2835_I2C_REASON_ERROR_NACK;
+	reason = BCM2835_I2C_REASON_ERROR_NACK;
     }
 
     // Received Clock Stretch Timeout
     else if (bcm2835_peri_read(status) & BCM2835_BSC_S_CLKT)
     {
-		reason = BCM2835_I2C_REASON_ERROR_CLKT;
+	reason = BCM2835_I2C_REASON_ERROR_CLKT;
     }
 
     // Not all data is received
     else if (remaining)
     {
-		reason = BCM2835_I2C_REASON_ERROR_DATA;
+	reason = BCM2835_I2C_REASON_ERROR_DATA;
     }
 
     bcm2835_peri_set_bits(control, BCM2835_BSC_S_DONE , BCM2835_BSC_S_DONE);

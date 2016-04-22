@@ -87,6 +87,7 @@ char *s;
          if( s == MAP_FAILED )
          {
             printf("we can't create mapping file\n");
+            exit(-1);
          }
       }
     }
