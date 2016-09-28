@@ -11,13 +11,15 @@
     @par        Revision
     $Id$
     @par        Copyright
-    2013 Denshikobo-Life,Ltd. All rights reserved.
+    2013--2016 Denshikobo-Life,Ltd. All rights reserved.
 *******************************************************************************
     @par        History
     - 2013/09/18 Akira Hiramine
       -# Initial Version
     - 2013/09/30 Akira Hiramine
       -# Delete the useless codes
+    - 2016/09/25 Akira Hiramine
+      -# bug fix
 ******************************************************************************/
 
 /** INCLUDES *******************************************************/
@@ -29,6 +31,8 @@
 #include <sys/resource.h>
 
 #include "bi_common.h"
+
+extern int pid;
 
 /** VARIABLES ********************************************************/
 char buff[RING_BUFF_SIZE]; ///< local buffer
@@ -94,24 +98,29 @@ int calc_rest_size( struct ring_buff *rb)
 /// \return         done:0, rest size smaller then len:-1
 int put_ring_buff(struct ring_buff *rb, char *str, int len )
 {
-    int i;
-    int w;
+  int i;
+  int w;
+  int loop = 0;
 
-    if( len >= calc_rest_size( rb ) )
+  while( len >= calc_rest_size( rb ) )
+  {
+    usleep(5000);
+    if( (loop++)>= 100 )
     {
-        return -1;
+      printf("put_ring_buff error pid=%d\n", pid);
+      dump_buff();
+      return -1;
     }
-    else
-    {
-      w = rb->wp;
-      for( i = 0; i<len;i++)
-      {
-        rb->buff[w++] = *(str+i);
-        w &= RING_POINTER_MASK;
-      }
-      rb->wp = w;
-      return 0;
-    }
+  }
+
+  w = rb->wp;
+  for( i = 0; i<len;i++)
+  {
+    rb->buff[w++] = *(str+i);
+    w &= RING_POINTER_MASK;
+  }
+  rb->wp = w;
+  return 0;
 }
 
 /// copy shared ring_buff to local buffer
@@ -124,17 +133,37 @@ int put_ring_buff(struct ring_buff *rb, char *str, int len )
 int get_ring_buff(struct ring_buff *rb, char *buff, int max_len)
 {
     int r;
-    int w;
+//    int w;
     int len;
+  int loop;
 
     r = rb->rp;
-    w = rb->wp;
+//    w = rb->wp;
     len = 0;
-    while( r != w )
+//    while( r != w )
+//    {
+//      if( len >= max_len)break;
+//      buff[len++] = rb->buff[r++];
+//      r &= RING_POINTER_MASK;
+//    }
+  loop = 0;
+    while( len < max_len )
     {
-      if( len >= max_len)break;
-      buff[len++] = rb->buff[r++];
-      r &= RING_POINTER_MASK;
+      if( rb->rp == rb->wp )
+      {
+        usleep(5000);
+        if( (loop++)>= 100 )
+          {
+            printf("get_ring_buff error pid=\n",pid);
+            dump_buff();
+            return -1;
+          }
+      }
+      else
+      {
+        buff[len++] = rb->buff[r++];
+        r &= RING_POINTER_MASK;
+      }
     }
     rb->rp = r;
     return len;
@@ -235,8 +264,12 @@ void set_long_code( long code)
 ///         - rp
 void get_ope_code( void )
 {
-    rp = 0;
-    rp += get_ring_buff( r_buff, buff, 1 );
+  rp = get_ring_buff( r_buff, buff, 1 );
+  if( rp != 1 )
+  {
+    printf("get_ope_code error \n");
+    dump_buff();
+  }
 }
 
 /// get byte code & increment rp
@@ -246,7 +279,18 @@ void get_ope_code( void )
 ///         - rp
 void get_byte_code( void )
 {
-    rp += get_ring_buff( r_buff, buff+rp, 1 );
+  int ret = 0;
+  
+  ret = get_ring_buff( r_buff, buff+rp, 1 );
+  if( ret != 1 )
+  {
+    printf("get_byte_code error\n");
+    dump_buff();
+  }
+  else
+  {
+    rp += ret;
+  }
 }
 
 /// get short int code & increment rp
@@ -256,7 +300,9 @@ void get_byte_code( void )
 ///         - rp
 void get_short_code( void )
 {
-    rp += get_ring_buff( r_buff, buff+rp, 2 );
+   get_byte_code();
+   get_byte_code();
+//    rp += get_ring_buff( r_buff, buff+rp, 2 );
 }
 
 /// get int code & increment rp
@@ -266,7 +312,9 @@ void get_short_code( void )
 ///         - rp
 void get_int_code( void )
 {
-    rp += get_ring_buff( r_buff, buff+rp, 4 );
+    get_short_code();
+    get_short_code();
+//    rp += get_ring_buff( r_buff, buff+rp, 4 );
 }
 
 /// get long code & increment rp
@@ -276,7 +324,9 @@ void get_int_code( void )
 ///         - rp
 void get_long_code( void )
 {
-    rp += get_ring_buff( r_buff, buff+rp, 8 );
+  get_int_code();
+  get_int_code();
+//    rp += get_ring_buff( r_buff, buff+rp, 8 );
 }
 
 /// copy byte data to dest from src
@@ -298,7 +348,9 @@ int i;
 void dump_buff(void)
 {
     int i;
-    printf("wp=%d rp=%d ",wp,rp);
+    printf("pid=%d ",pid);
+    printf("w_buff=%08x wp=%d rp=%d \n",w_buff,w_buff->wp,w_buff->rp);
+    printf("r_buff=%08x wp=%d rp=%d \n",r_buff,r_buff->wp,r_buff->rp);
     for( i=0;i<wp;i++)
     {
       printf("%02x ",buff[i]);
@@ -319,7 +371,7 @@ int context_switch( int max_count)
     loop_count = 0;
     while( calc_data_size( w_buff ) != 0 )
     {
-        usleep(1000);
+        usleep(5000);
         if( (loop_count++) >= max_count )
         {
             bi_status = COUNT_OVER;

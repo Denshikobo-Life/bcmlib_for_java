@@ -56,11 +56,19 @@
 /// \return         done:0, time_over:-1
 int put_command(struct ring_buff *rb, char *str, int len )
 {
-    while( put_ring_buff( w_buff, buff, wp ) != 0 )
+  int loop;
+  loop= 0;
+    while( calc_rest_size( w_buff ) < len )
     {
-        if( context_switch(100) != 0 )return -1;
+       usleep(5000);
+       if( (loop++) >= 100 )return -1;
     }
-    return 0;
+    if( put_ring_buff( w_buff, buff, wp ) != 0 )
+    {
+      printf("put_command error\n");
+      return -1;
+    }
+  else return 0;
 }
 
 //extern int local_sync_code;   ///< base sync code(counter)
@@ -117,14 +125,8 @@ int send_command_1(struct ring_buff *rb, char *str, int len)
 {
   int check_return;
   set_sync();
-#ifdef DEBUG
-  printf("command=0x%02x \n",*buff);
-#endif
   if ( put_command( rb, str, len ) != 0 ) return -1;
   check_return = check_sync();
-#ifdef DEBUG
-  printf("checksync=%d \n",check_return);
-#endif
   get_ope_code();
   get_int_code();
   return *(uint32_t *)(buff+1);     // Append @2015.07.24 
@@ -137,6 +139,9 @@ int send_command_1(struct ring_buff *rb, char *str, int len)
 /// \par            Refer
 /// \par            Modify
 /// \return         done:0, time_over:-1
+
+//printf("r_buff=%p r_buff->wp=%d r_buff->rp=%d \n",r_buff,r_buff->wp,r_buff->rp);
+
 int send_command_2(struct ring_buff *rb, char *str, int len)
 {
   int check_return;
@@ -145,18 +150,11 @@ int send_command_2(struct ring_buff *rb, char *str, int len)
   set_sync();
   if ( put_command( rb, str, len ) != 0 ) return -1;
   check_return = check_sync();
-#ifdef DEBUG
-  printf("checksync=%d \n",check_return);
-#endif
-//printf("r_buff=%p r_buff->wp=%d r_buff->rp=%d \n",r_buff,r_buff->wp,r_buff->rp);
   get_ope_code();
   get_int_code();
   get_int_code();
-//printf("r_buff=%p r_buff->wp=%d r_buff->rp=%d \n",r_buff,r_buff->wp,r_buff->rp);
-//dump_buff();
   dest = *(char **)(buff+1);
   dlen = *(uint32_t *)(buff+5);
-//  printf("dest=%p dlen=%d \n",dest,dlen);
   copy_str( dest, bi_rec_buff, dlen);
   return 0;
 }
@@ -165,14 +163,8 @@ uint8_t send_command_3(struct ring_buff *rb, char *str, int len)
 {
   int check_return;
   set_sync();
-#ifdef DEBUG
-  printf("command=0x%02x \n",*buff);
-#endif
   if ( put_command( rb, str, len ) != 0 ) return -1;
   check_return = check_sync();
-#ifdef DEBUG
-  printf("checksync=%d \n",check_return);
-#endif
   get_ope_code();
   get_byte_code();
   return *(uint8_t *)(buff+1);
@@ -358,9 +350,12 @@ void gpio_clr_multi(uint32_t mask)
 /// \par            Modify
 uint8_t gpio_lev(uint8_t pin)
 {
+  uint8_t ret;
    set_ope_code( OPE_GPIO_LEV );
    set_byte_code( pin );
    return (uint8_t)send_command_3( w_buff, buff, wp );
+//   ret =  (uint8_t)send_command_4( w_buff, buff, wp );
+  return ret;
 }
 
 // See if an event detection bit is set

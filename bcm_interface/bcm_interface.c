@@ -39,7 +39,7 @@
 /// \defgroup bcm_interface bcm_interface
 /// \ingroup PARENT
 /// @{
-
+int pid = 0;
 int child;    ///< pid of bcm2835_for_java
 int fd;       ///< file discripter of shared memory
 
@@ -116,7 +116,7 @@ char *s;
         exit(0);
     }
 
-    printf("bcm_interface ver1.00 start \n");
+    printf("bcm_interface ver1.01a start \n");
     if( context_switch(100) != 0 )
     {
         printf("bi_status = %d  @bi_init \n",bi_status );

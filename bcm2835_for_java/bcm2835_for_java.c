@@ -35,6 +35,8 @@
 
 int bi_status;  ///< bcm_interface status STATUS_FINE|TIME_OUT|elss ?
 
+int pid = 1;
+
 /// \defgroup bcm2835_for_java bcm2835_for_java 
 /// \ingroup CHILD
 /// @{
@@ -1011,11 +1013,14 @@ int main(int argc, char **argv)
     int fd;
     char *s;
     unsigned char ope_code;
+    unsigned char prev_code;
+    unsigned char data_size;
+    unsigned char prev_size;
     int len;
     int baud;
     char ret;
     
-    printf("bcm2835_for_java ver1.00 start \n");
+    printf("bcm2835_for_java ver1.01 start priority=%d\n", nice(1) );
     if( argc != 2 )
     {
         printf("bcm2835_for_java needs 1 parameter like as /tmp/shared_mem\n");
@@ -1039,6 +1044,7 @@ int main(int argc, char **argv)
       }
     }
 
+  
     r_buff = (struct ring_buff *)s;
     w_buff = (struct ring_buff *)(s+sizeof(struct ring_buff) );
     bi_send_buff = (char *)( s + 2*sizeof(struct ring_buff) );
@@ -1055,12 +1061,11 @@ int main(int argc, char **argv)
     {
         if( calc_data_size( r_buff ) != 0 )
         {
-            get_ope_code();
-            ope_code = buff[0];
-#ifdef DEBUG
-          printf("bcm_for_java ope_code=0x%02x \n",ope_code);
-          printf("r_buff->wp=%d r_buff->rp=%d \n",r_buff->wp,r_buff->rp);
-#endif
+          prev_code = ope_code;
+          prev_size = data_size;
+          get_ope_code();
+          ope_code = buff[0];
+          data_size = calc_data_size( r_buff );
           switch( ope_code )
             {
                 case OPE_INIT:
@@ -1248,7 +1253,7 @@ int main(int argc, char **argv)
                     set_int_code( strlen(bi_rec_buff) );
                     put_reply();
                     mark_sync();
-                    usleep(0);
+                    usleep(5000);
                     break;
                 case OPE_SYNC:
                     mark_sync();
@@ -1271,11 +1276,17 @@ int main(int argc, char **argv)
                 case OPE_CLOSE_UART:
                     close_uart();
                     break;
+            default:
+              printf("prev_code %02x \n",prev_code);
+              printf("prev_size %d \n",prev_size);
+              printf("ope_code error %02x \n",ope_code);
+              printf("data_size=%d \n",data_size);
+              break;
             }
         }
         else
         {
-            usleep(0);
+            usleep(5000);
         }
     }
 BREAK_LINE:
